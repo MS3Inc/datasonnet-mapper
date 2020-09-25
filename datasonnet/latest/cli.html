@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Using DataSonnet Programmatically :: DataSonnet Mapper Documentation</title>
-    <link rel="canonical" href="https://MS3Inc.github.io/datasonnet-mapper/datasonnet/0.4.1-MS3-SNAPSHOT/jar-lib.html">
+    <title>Command Line Interface :: DataSonnet Mapper Documentation</title>
+    <link rel="canonical" href="https://MS3Inc.github.io/datasonnet-mapper/datasonnet/latest/cli.html">
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -56,7 +56,7 @@
   </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="datasonnet" data-version="0.4.1-MS3-SNAPSHOT">
+<div class="nav-container" data-component="datasonnet" data-version="latest">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -83,7 +83,7 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="libraries.html">Additional DataSonnet Libraries</a>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="cli.html">Command Line Interface</a>
 <ul class="nav-list">
@@ -98,7 +98,7 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="cookbook.html">Cookbook</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="jar-lib.html">Using DataSonnet Programmatically</a>
   </li>
 </ul>
@@ -116,14 +116,14 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">DataSonnet</span>
-    <span class="version">0.4.1-MS3-SNAPSHOT</span>
+    <span class="version">latest</span>
   </div>
   <ul class="components">
     <li class="component is-current">
       <span class="title">DataSonnet</span>
       <ul class="versions">
         <li class="version is-current is-latest">
-          <a href="index.html">0.4.1-MS3-SNAPSHOT</a>
+          <a href="index.html">latest</a>
         </li>
       </ul>
     </li>
@@ -139,92 +139,54 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">DataSonnet</a></li>
-    <li><a href="jar-lib.html">Using DataSonnet Programmatically</a></li>
+    <li><a href="cli.html">Command Line Interface</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/MS3Inc/datasonnet-mapper/edit/main/docs/modules/ROOT/pages/jar-lib.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/MS3Inc/datasonnet-mapper/edit/main/docs/modules/ROOT/pages/cli.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Using DataSonnet Programmatically</h1>
+<h1 class="page">Command Line Interface</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>DataSonnet is distributed as a JAR which contains all necessary classes and dependencies to use DataSonnet programmatically embedded in your projects. Use the following Maven snippet to add DataSonnet as a dependency to your <code>pom.xml</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.datasonnet&lt;/groupId&gt;
-    &lt;artifactId&gt;datasonnet-mapper&lt;/artifactId&gt;
-    &lt;version&gt;${datasonnet.version}&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
+<p>You&#8217;ll call the Command Line Interface (CLI) either via a Java Jar or Docker, but the arguments passed will be the same either way.
+In this shared documentation, calling the CLI with some arguments will be written <code><em>datasonnet</em> -args here</code>, where <code><em>datasonnet</em></code> stands for either the Jar or Docker calling convention.</p>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_transforming_data"><a class="anchor" href="#_transforming_data"></a>Transforming Data</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>where <code>${datasonnet.version}</code> is the latest released version (currently 1.0.4).</p>
-</div>
-<div class="paragraph">
-<p>The simplest scenario is mapping from JSON to JSON with no additional variables:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String json = ...; //JSON object as string
-
-Mapper mapper = new Mapper(datasonnetScript);
-String transformedJson = mapper.transform(json)</code></pre>
-</div>
+<p><code><em>datasonnet</em> run mapping.ds input.json</code></p>
 </div>
 <div class="paragraph">
-<p>More complex scenarios may involve passing additional variables as well as <a href="dataformats.html" class="page">transforming to/from other supported data formats</a>:</p>
+<p>This passes “input.json” as the payload to the transformation.
+Note: it doesn’t matter to the CLI what your filename is, it will pass it to the DataSonnet with the name “payload”.
+The output will be printed.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String jsonData = ...;
-
-String jsonVar = ...;
-String xmlVar = ...;
-String textVar = ...;
-
-Map&lt;String, Document&gt; variables = new HashMap&lt;&gt;();
-variables.put("varJson", new StringDocument(jsonVar, "application/json"));
-variables.put("varXml", new StringDocument(xmlVar, "application/xml"));
-variables.put("varTxt", new StringDocument(textVar, "text/plain"));
-
-Mapper mapper = new Mapper(datasonnetScript, variables.keySet());
-Document transformedResult = mapper.transform(new StringDocument(jsonData, "application/json"), variables, "application/json");
-String jsonResult = transformedResult.getContentsAsString();</code></pre>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_validation"><a class="anchor" href="#_validation"></a>Validation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code><em>datasonnet</em> validate mapping.ds</code></p>
 </div>
 <div class="paragraph">
-<p>The <code>Mapper</code> constructor accepts the following arguments:</p>
+<p>This validates the syntax of your DataSonnet.
+Note: it does not validate the logic of the program at all, for example, errors in variable names.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>datasonnetScript</code> - the <code>String</code> which contains the mapping code;</p>
-</li>
-<li>
-<p><code>argumentNames</code> - the <code>java.util.Set</code> which contains the names of the additional variables</p>
-</li>
-</ul>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_help"><a class="anchor" href="#_help"></a>Help</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>transform</code> method accepts the following arguments:</p>
+<p>For more options, including how to pass variables into your DataSonnet, check out the help options with -h.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>payload - the instance of the <code>com.datasonnet.Document</code> which contains the data and the mime type;</p>
-</li>
-<li>
-<p>variables - the instance of the <code>Map&lt;String, com.datasonnet.Document&gt;</code> which contains the additional variables.</p>
-</li>
-</ul>
 </div>
-<div class="paragraph">
-<p>The result of the <code>transform</code> method invocation is the instance of the <code>com.datasonnet.Document</code> object which contains the result of the mapping and its mime type.</p>
-</div>
-<div class="paragraph">
-<p>There are overloaded <code>transform</code> methods which accept different sets of parameters; see the DataSonnet source code and documentation for details.</p>
 </div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">

@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Command Line Interface :: DataSonnet Mapper Documentation</title>
-    <link rel="canonical" href="https://MS3Inc.github.io/datasonnet-mapper/datasonnet/0.4.1-MS3-SNAPSHOT/cli.html">
+    <title>Untitled :: DataSonnet Mapper Documentation</title>
+    <link rel="canonical" href="https://MS3Inc.github.io/datasonnet-mapper/datasonnet/latest/docker-cli.html">
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -56,7 +56,7 @@
   </nav>
 </header>
 <div class="body">
-<div class="nav-container" data-component="datasonnet" data-version="0.4.1-MS3-SNAPSHOT">
+<div class="nav-container" data-component="datasonnet" data-version="latest">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -83,14 +83,14 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="libraries.html">Additional DataSonnet Libraries</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="cli.html">Command Line Interface</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="jar-cli.html">Using the CLI via a Jar</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="docker-cli.html">Using the CLI via Docker</a>
   </li>
 </ul>
@@ -116,14 +116,14 @@
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
     <span class="title">DataSonnet</span>
-    <span class="version">0.4.1-MS3-SNAPSHOT</span>
+    <span class="version">latest</span>
   </div>
   <ul class="components">
     <li class="component is-current">
       <span class="title">DataSonnet</span>
       <ul class="versions">
         <li class="version is-current is-latest">
-          <a href="index.html">0.4.1-MS3-SNAPSHOT</a>
+          <a href="index.html">latest</a>
         </li>
       </ul>
     </li>
@@ -140,52 +140,17 @@
   <ul>
     <li><a href="index.html">DataSonnet</a></li>
     <li><a href="cli.html">Command Line Interface</a></li>
+    <li><a href="docker-cli.html">Using the CLI via Docker</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/MS3Inc/datasonnet-mapper/edit/main/docs/modules/ROOT/pages/cli.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/MS3Inc/datasonnet-mapper/edit/main/docs/modules/ROOT/pages/docker-cli.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Command Line Interface</h1>
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>You&#8217;ll call the Command Line Interface (CLI) either via a Java Jar or Docker, but the arguments passed will be the same either way.
-In this shared documentation, calling the CLI with some arguments will be written <code><em>datasonnet</em> -args here</code>, where <code><em>datasonnet</em></code> stands for either the Jar or Docker calling convention.</p>
-</div>
-</div>
-</div>
 <div class="sect1">
-<h2 id="_transforming_data"><a class="anchor" href="#_transforming_data"></a>Transforming Data</h2>
+<h2 id="_coming_soon"><a class="anchor" href="#_coming_soon"></a>Coming Soon</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code><em>datasonnet</em> run mapping.ds input.json</code></p>
-</div>
-<div class="paragraph">
-<p>This passes “input.json” as the payload to the transformation.
-Note: it doesn’t matter to the CLI what your filename is, it will pass it to the DataSonnet with the name “payload”.
-The output will be printed.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_validation"><a class="anchor" href="#_validation"></a>Validation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><code><em>datasonnet</em> validate mapping.ds</code></p>
-</div>
-<div class="paragraph">
-<p>This validates the syntax of your DataSonnet.
-Note: it does not validate the logic of the program at all, for example, errors in variable names.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_help"><a class="anchor" href="#_help"></a>Help</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For more options, including how to pass variables into your DataSonnet, check out the help options with -h.</p>
-</div>
+
 </div>
 </div>
 </article>
