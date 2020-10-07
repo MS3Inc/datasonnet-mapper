@@ -164,9 +164,9 @@
 <h2 id="_core"><a class="anchor" href="#_core"></a>core</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_appendarray_arr_any_value"><a class="anchor" href="#_appendarray_arr_any_value"></a><code>append(array arr, any value)</code></h3>
+<h3 id="_appendarray_arr_any_val"><a class="anchor" href="#_appendarray_arr_any_val"></a><code>append(array arr, any val)</code></h3>
 <div class="paragraph">
-<p>Given an array and a value, appends the value to the end of the array.</p>
+<p>Given <code>arr</code> and <code>val</code>, appends <code>val</code> to the end of <code>arr</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -204,7 +204,7 @@
 <div class="sect2">
 <h3 id="_combineany_first_any_second"><a class="anchor" href="#_combineany_first_any_second"></a><code>combine(any first, any second)</code></h3>
 <div class="paragraph">
-<p>Combines the two values given. Some values will auto-coerce, e.g. the number 5 will auto coerce to the string "5."</p>
+<p>Combines <code>first</code> and <code>second</code>. Some values will auto-coerce, e.g. the number 5 will auto coerce to the string "5."</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -243,9 +243,12 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_containsarraystring_item_any_value"><a class="anchor" href="#_containsarraystring_item_any_value"></a><code>contains(array|string item, any value)</code></h3>
+<h3 id="_containsarraystring_item_any_val"><a class="anchor" href="#_containsarraystring_item_any_val"></a><code>contains(array|string item, any val)</code></h3>
 <div class="paragraph">
-<p>Returns true if the array contains the given value or if the string contains the value sub string.</p>
+<p>If <code>item</code> is an array, returns true if <code>item</code> contains <code>val</code>.</p>
+</div>
+<div class="paragraph">
+<p>If <code>item</code> is a string, returns true if <code>item</code> contains the sub string <code>val</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -277,7 +280,10 @@
 <div class="sect2">
 <h3 id="_distinctbyarrayobject_item_function_discriminator"><a class="anchor" href="#_distinctbyarrayobject_item_function_discriminator"></a><code>distinctBy(array|object item, function discriminator)</code></h3>
 <div class="paragraph">
-<p>Returns a new object containing only the items that are a unique result from the provided function.</p>
+<p>Returns a new object containing only the items that are a unique result from <code>discriminator</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>discriminator</code> is expected to take the value as the first parameter (required) and the index as the second (optional).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -301,7 +307,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.distinctBy(payload, function(item,index) item)</pre>
+<pre>ds.distinctBy(payload, function(value, index) value)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -320,7 +326,7 @@
 <div class="sect2">
 <h3 id="_endswithstring_str_string_substr"><a class="anchor" href="#_endswithstring_str_string_substr"></a><code>endsWith(string str, string subStr)</code></h3>
 <div class="paragraph">
-<p>Returns true if the given string ends with the substring. Ignores casing.</p>
+<p>Returns true if <code>str</code> ends with <code>subStr</code>. Ignores casing.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -350,7 +356,7 @@
 <div class="sect2">
 <h3 id="_entriesofobject_obj"><a class="anchor" href="#_entriesofobject_obj"></a><code>entriesOf(object obj)</code></h3>
 <div class="paragraph">
-<p>Returns an array of objects describing each key value pair.</p>
+<p>Returns an array of objects describing each key value pair of <code>obj</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -387,9 +393,12 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_filterarray_arr_function_provfunc"><a class="anchor" href="#_filterarray_arr_function_provfunc"></a><code>filter(array arr, function provFunc)</code></h3>
+<h3 id="_filterarray_arr_function_func"><a class="anchor" href="#_filterarray_arr_function_func"></a><code>filter(array arr, function func)</code></h3>
 <div class="paragraph">
-<p>Filters an array depending on the result of the provided function.</p>
+<p>Filters <code>arr</code> depending on the result of <code>func</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the value as the first parameter (required) and the index as the second (optional).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -408,7 +417,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.filter(payload, function(item,index) item &lt; 3)</pre>
+<pre>ds.filter(payload, function(value, index) value &lt; 3)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -422,9 +431,12 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_filterobjectobject_obj_function_provfunc"><a class="anchor" href="#_filterobjectobject_obj_function_provfunc"></a><code>filterObject(object obj, function provFunc)</code></h3>
+<h3 id="_filterobjectobject_obj_function_func"><a class="anchor" href="#_filterobjectobject_obj_function_func"></a><code>filterObject(object obj, function func)</code></h3>
 <div class="paragraph">
-<p>Filters an object depending on the result of the provided function.</p>
+<p>Filters <code>obj</code> depending on the result of <code>func</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the property value as the first parameter (required), the property key as the second (optional) and the index as the third (optional).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -440,7 +452,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.filterObject(payload, function(value,key,index) value &gt; 1.5)</pre>
+<pre>ds.filterObject(payload, function(value, key, index) value &gt; 1.5)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -453,9 +465,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_findstringarray_item_any_value"><a class="anchor" href="#_findstringarray_item_any_value"></a><code>find(string|array item, any value)</code></h3>
+<h3 id="_findstringarray_item_any_val"><a class="anchor" href="#_findstringarray_item_any_val"></a><code>find(string|array item, any val)</code></h3>
 <div class="paragraph">
-<p>Returns an array containing the location where the value occurs.</p>
+<p>Returns an array containing the location where <code>val</code> occurs in <code>item</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -487,9 +499,12 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_flatmaparray_arr_function_provfunction"><a class="anchor" href="#_flatmaparray_arr_function_provfunction"></a><code>flatMap(array arr, function provFunction)</code></h3>
+<h3 id="_flatmaparray_arr_function_func"><a class="anchor" href="#_flatmaparray_arr_function_func"></a><code>flatMap(array arr, function func)</code></h3>
 <div class="paragraph">
-<p>Given an array of arrays, creates a flat array using the outcome of the provided function.</p>
+<p>Given an array of arrays <code>arr</code>, creates a flat array using the outcome of <code>func</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the value as the first parameter (required) and the index as the second (optional).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -516,7 +531,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.flatMap(payload, function(item,index) item)</pre>
+<pre>ds.flatMap(payload, function(value, index) value)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -538,7 +553,10 @@
 <div class="sect2">
 <h3 id="_foldleftarray_arr_function_func_any_initval"><a class="anchor" href="#_foldleftarray_arr_function_func_any_initval"></a><code>foldLeft(array arr, function func, any initVal)</code></h3>
 <div class="paragraph">
-<p>Iterates over an array, applying the function to the previous result.</p>
+<p>Iterates over <code>arr</code>, applying <code>func</code> to the previous result. Starts with the value provided in <code>initVal</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the current value as the first parameter (required) and the previous value as the second parameter (required).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -557,7 +575,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.foldLeft(payload, function(curr,prev) curr * prev, 1)</pre>
+<pre>ds.foldLeft(payload, function(curr, prev) curr * prev, 1)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -576,7 +594,10 @@
 <div class="sect2">
 <h3 id="_foldrightarray_arr_function_func_any_initval"><a class="anchor" href="#_foldrightarray_arr_function_func_any_initval"></a><code>foldRight(array arr, function func, any initVal)</code></h3>
 <div class="paragraph">
-<p>Iterates backwards over an array, applying the function to the previous result.</p>
+<p>Iterates backwards over an array, applying <code>func</code> to the previous result. Starts with the value provided in <code>initVal</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the current value as the first parameter (required) and the previous value as the second parameter (required).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -595,7 +616,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.foldRight(payload, function(curr,prev) curr * prev, 1)</pre>
+<pre>ds.foldRight(payload, function(curr, prev) curr * prev, 1)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -614,7 +635,10 @@
 <div class="sect2">
 <h3 id="_groupbyarrayobject_items_function_discriminator"><a class="anchor" href="#_groupbyarrayobject_items_function_discriminator"></a><code>groupBy(array|object items, function discriminator)</code></h3>
 <div class="paragraph">
-<p>Groups the provided items into an object based on the result of the provided function.</p>
+<p>Groups the provided <code>items</code> into an object based on the result of <code>discriminator</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>discriminator</code> is expected to take the value as the first parameter (required) and the index as the second (optional).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -653,7 +677,7 @@
 <div class="title">DataSonnet map:</div>
 <div class="content">
 <pre>{
-  languageGroups: ds.groupBy(payload.languages, function(item,index) item.language.name)
+  languageGroups: ds.groupBy(payload.languages, function(value, index) value.language.name)
 }</pre>
 </div>
 </div>
@@ -693,9 +717,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_isarrayany_val"><a class="anchor" href="#_isarrayany_val"></a><code>isArray(any val)</code></h3>
+<h3 id="_isarrayany_valtocheck"><a class="anchor" href="#_isarrayany_valtocheck"></a><code>isArray(any valToCheck)</code></h3>
 <div class="paragraph">
-<p>Accepts any given value and checks if it is of type array.</p>
+<p>Accepts any given value as <code>valToCheck</code> and checks if it is of type array.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -725,9 +749,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_isblankstring_str"><a class="anchor" href="#_isblankstring_str"></a><code>isBlank(string str)</code></h3>
+<h3 id="_isblankstring_strtocheck"><a class="anchor" href="#_isblankstring_strtocheck"></a><code>isBlank(string strToCheck)</code></h3>
 <div class="paragraph">
-<p>Checks if a string is blank. Also returns true if null.</p>
+<p>Checks if <code>strToCheck</code> is blank. Also returns true if null.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -754,9 +778,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_isbooleanany_val"><a class="anchor" href="#_isbooleanany_val"></a><code>isBoolean(any val)</code></h3>
+<h3 id="_isbooleanany_valtocheck"><a class="anchor" href="#_isbooleanany_valtocheck"></a><code>isBoolean(any valToCheck)</code></h3>
 <div class="paragraph">
-<p>Accepts any given value and checks if it is of type bool.</p>
+<p>Accepts any given value as <code>valToCheck</code> and checks if it is of type bool.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -786,7 +810,7 @@
 <div class="sect2">
 <h3 id="_isdecimalnum_numtocheck"><a class="anchor" href="#_isdecimalnum_numtocheck"></a><code>isDecimal(num numToCheck)</code></h3>
 <div class="paragraph">
-<p>Checks that the input number is a decimal number. Trailing zeros do not count</p>
+<p>Checks that the input number <code>numToCheck</code> is a decimal number. Trailing zeros do not count.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -814,9 +838,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_isemptyany_val"><a class="anchor" href="#_isemptyany_val"></a><code>isEmpty(any val)</code></h3>
+<h3 id="_isemptyany_valtocheck"><a class="anchor" href="#_isemptyany_valtocheck"></a><code>isEmpty(any valToCheck)</code></h3>
 <div class="paragraph">
-<p>Checks if a given value is empty. Does not ignore white space if string. Returns true if null.</p>
+<p>Checks if <code>valToCheck</code> is empty. Does not ignore white space if string. Returns true if null.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -843,7 +867,7 @@
 <div class="sect2">
 <h3 id="_isevennum_numtocheck"><a class="anchor" href="#_isevennum_numtocheck"></a><code>isEven(num numToCheck)</code></h3>
 <div class="paragraph">
-<p>Checks that the input number is an even number.</p>
+<p>Checks that the input number <code>numToCheck</code> is an even number.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -872,7 +896,7 @@
 <div class="sect2">
 <h3 id="_isfunctionany_valtocheck"><a class="anchor" href="#_isfunctionany_valtocheck"></a><code>isFunction(any valToCheck)</code></h3>
 <div class="paragraph">
-<p>Accepts any given value and checks if it is of type function.</p>
+<p>Accepts any given value <code>valToCheck</code> and checks if it is of type function.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -893,7 +917,9 @@
 <div class="sect2">
 <h3 id="_isintegernum_numtocheck"><a class="anchor" href="#_isintegernum_numtocheck"></a><code>isInteger(num numToCheck)</code></h3>
 <div class="paragraph">
-<p>Checks that the input number is an integer.</p>
+<p>Checks that the input number <code>numToCheck</code> is an integer.
+The number passed drops trailing zeros, so <code>2.0</code> would be <code>true</code>
+but <code>2.1</code> would be <code>false</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -922,7 +948,7 @@
 <div class="sect2">
 <h3 id="_isnumberany_valtocheck"><a class="anchor" href="#_isnumberany_valtocheck"></a><code>isNumber(any valToCheck)</code></h3>
 <div class="paragraph">
-<p>Accepts any given value and checks if it is of type number.</p>
+<p>Accepts any given value <code>valToCheck</code> and checks if it is of type number.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -951,7 +977,7 @@
 <div class="sect2">
 <h3 id="_isobjectany_valtocheck"><a class="anchor" href="#_isobjectany_valtocheck"></a><code>isObject(any valToCheck)</code></h3>
 <div class="paragraph">
-<p>Accepts any given value and checks if it is of type object.</p>
+<p>Accepts any given value <code>valToCheck</code> and checks if it is of type object.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -980,7 +1006,7 @@
 <div class="sect2">
 <h3 id="_isoddnum_numtocheck"><a class="anchor" href="#_isoddnum_numtocheck"></a><code>isOdd(num numToCheck)</code></h3>
 <div class="paragraph">
-<p>Checks that the input number is an odd number.</p>
+<p>Checks that <code>numToCheck</code> is an odd number.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1009,7 +1035,7 @@
 <div class="sect2">
 <h3 id="_isstringany_valtocheck"><a class="anchor" href="#_isstringany_valtocheck"></a><code>isString(any valToCheck)</code></h3>
 <div class="paragraph">
-<p>Accepts any given value and checks if it is of type string.</p>
+<p>Accepts any given value <code>valToCheck</code> and checks if it is of type string.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1038,7 +1064,7 @@
 <div class="sect2">
 <h3 id="_joinbyarray_arr_string_separator"><a class="anchor" href="#_joinbyarray_arr_string_separator"></a><code>joinBy(array arr, string separator)</code></h3>
 <div class="paragraph">
-<p>Joins an entire array into a string with the provided seperator.</p>
+<p>Joins <code>arr</code> into a string with the provided <code>separator</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1067,7 +1093,7 @@
 <div class="sect2">
 <h3 id="_keysofobject_obj"><a class="anchor" href="#_keysofobject_obj"></a><code>keysOf(object obj)</code></h3>
 <div class="paragraph">
-<p>Returns an array of all the key names in a given object.</p>
+<p>Returns an array of all the key names in <code>obj</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1102,7 +1128,7 @@
 <div class="sect2">
 <h3 id="_lowerstring_str"><a class="anchor" href="#_lowerstring_str"></a><code>lower(string str)</code></h3>
 <div class="paragraph">
-<p>Converts a string to all lower case characters.</p>
+<p>Converts <code>str</code> to all lower case characters.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1130,9 +1156,12 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_maparray_arrtomap_function_func"><a class="anchor" href="#_maparray_arrtomap_function_func"></a><code>map(array arrToMap, function func)</code></h3>
+<h3 id="_maparray_arr_function_func"><a class="anchor" href="#_maparray_arr_function_func"></a><code>map(array arr, function func)</code></h3>
 <div class="paragraph">
-<p>Loops through all items in a given array, applys the function to each, and returns a new array containing each result. Returns null if array is null.</p>
+<p>Loops through all items in <code>arr</code>, applies <code>func</code> to each, and returns a new array containing each result. Returns null if <code>arr</code> is null.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the value as the first parameter (required) and the index as the second (optional).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1148,7 +1177,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.map(payload.versions, function(item,index) item &gt; 1.2)</pre>
+<pre>ds.map(payload.versions, function(value, index) value &gt; 1.2)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1166,7 +1195,10 @@
 <div class="sect2">
 <h3 id="_mapentriesobject_obj_function_func"><a class="anchor" href="#_mapentriesobject_obj_function_func"></a><code>mapEntries(object obj, function func)</code></h3>
 <div class="paragraph">
-<p>Loops through all properties in a given object applying the function to each and returns a new array containing each result.</p>
+<p>Loops through all properties in <code>obj</code>, applies <code>func</code> to each, and returns a new array containing each result.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the property value as the first parameter (required), the property key as the second (optional) and the index as the third (optional).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1177,13 +1209,13 @@
 <pre>{
    "origin": "PHX",
    "destination": "SEA"
- }</pre>
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.mapEntries(payload, function(value,key,index) value)</pre>
+<pre>ds.mapEntries(payload, function(value, key, index) value)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1199,7 +1231,7 @@
 <div class="sect2">
 <h3 id="_mapobjectobject_obj_function_func"><a class="anchor" href="#_mapobjectobject_obj_function_func"></a><code>mapObject(object obj, function func)</code></h3>
 <div class="paragraph">
-<p>Loops through all properties in a given object applying the function to each and returns a new object containing each result.</p>
+<p>Loops through all properties in <code>obj</code>, applies <code>func</code> to each, and returns a new object containing each result.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1216,7 +1248,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.mapObject(payload, function(value,key,index) {[key]:value})</pre>
+<pre>ds.mapObject(payload, function(value, key, index) {[key]:value})</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -1232,7 +1264,7 @@
 <div class="sect2">
 <h3 id="_removeobject_obj_string_propname"><a class="anchor" href="#_removeobject_obj_string_propname"></a><code>remove(object obj, string propName)</code></h3>
 <div class="paragraph">
-<p>Removes a property with the given name from the object and returns the remaining object.</p>
+<p>Removes property <code>propName</code> from <code>obj</code> and returns the remaining object.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1274,7 +1306,7 @@
 <div class="sect2">
 <h3 id="_reversearray_arr"><a class="anchor" href="#_reversearray_arr"></a><code>reverse(array arr)</code></h3>
 <div class="paragraph">
-<p>Returns an array with elements in reverse order.</p>
+<p>Returns an array with elements of <code>arr</code> in reverse order.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1311,7 +1343,7 @@
 <div class="sect2">
 <h3 id="_parsedoublestring_str"><a class="anchor" href="#_parsedoublestring_str"></a><code>parseDouble(string str)</code></h3>
 <div class="paragraph">
-<p>Parses a string which contains a double number and returns its numeric representation</p>
+<p>Parses a string <code>str</code> which contains a double number and returns its numeric representation</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1349,7 +1381,7 @@
 <div class="sect2">
 <h3 id="_hashstring_value_string_algorithm"><a class="anchor" href="#_hashstring_value_string_algorithm"></a><code>hash(string value, string algorithm)</code></h3>
 <div class="paragraph">
-<p>Calculates hash of a String value using one of the supported algorithms. The <code>algorithm</code> must be one of <code>MD2</code>, <code>MD5</code>, <code>SHA-1</code>, <code>SHA-256</code>, <code>SHA-384</code>, <code>SHA-512</code>
+<p>Calculates hash of <code>value</code> using one of the supported algorithms. The <code>algorithm</code> must be one of <code>MD2</code>, <code>MD5</code>, <code>SHA-1</code>, <code>SHA-256</code>, <code>SHA-384</code>, <code>SHA-512</code>
 The response is a string containing the hash bytes.</p>
 </div>
 <div class="paragraph">
@@ -1374,7 +1406,7 @@ The response is a string containing the hash bytes.</p>
 <div class="sect2">
 <h3 id="_hmacstring_value_string_secret_string_algorithm"><a class="anchor" href="#_hmacstring_value_string_secret_string_algorithm"></a><code>hmac(string value, string secret, string algorithm)</code></h3>
 <div class="paragraph">
-<p>Generates hash-based message autentication code using provided secret and a hash function algorithm. The <code>algoritm</code> must be one of <code>HmacSHA1</code>, <code>HmacSHA256</code> or <code>HmacSHA512</code>.</p>
+<p>Generates hash-based message authentication code using provided <code>value</code>, <code>secret</code>, and a hash function <code>algorithm</code>. The <code>algorithm</code> must be one of <code>HmacSHA1</code>, <code>HmacSHA256</code> or <code>HmacSHA512</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example:</strong></p>
@@ -1577,7 +1609,7 @@ The response is formatted using the same format as an input.</p>
 <div class="sect2">
 <h3 id="_offsetstring_datetime_string_period"><a class="anchor" href="#_offsetstring_datetime_string_period"></a><code>offset(string datetime, string period)</code></h3>
 <div class="paragraph">
-<p>Returns a copy of this datetime with the specified amount added. The <code>datetime</code> parameter is in the ISO-8601 format without an offset.
+<p>Returns a copy of <code>datetime</code> with the specified amount added. The <code>datetime</code> parameter is in the ISO-8601 format without an offset.
 The <code>period</code> is a string in the ISO-8601 period format.</p>
 </div>
 <div class="paragraph">
@@ -1712,7 +1744,7 @@ It uses the <a href="https://github.com/json-path/JsonPath">Jayway JsonPath impl
 <div class="sect2">
 <h3 id="_sumarray_arr"><a class="anchor" href="#_sumarray_arr"></a><code>sum(array arr)</code></h3>
 <div class="paragraph">
-<p>Returns sum of all elements in the array.</p>
+<p>Returns sum of all elements in <code>arr</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1739,7 +1771,7 @@ It uses the <a href="https://github.com/json-path/JsonPath">Jayway JsonPath impl
 <div class="sect2">
 <h3 id="_rounddouble_num_int_precision"><a class="anchor" href="#_rounddouble_num_int_precision"></a><code>round(double num, int precision)</code></h3>
 <div class="paragraph">
-<p>Rounds a double to the number of digits after the decimal point</p>
+<p>Rounds a double <code>num</code> to the number of digits after the decimal point.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
