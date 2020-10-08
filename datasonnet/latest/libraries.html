@@ -1470,8 +1470,7 @@
 <p>If <code>items</code> is an array: the function <code>func</code> is expected to take the value as the first parameter (required).</p>
 </div>
 <div class="paragraph">
-<p>If <code>items</code> is an object: the function <code>func</code> is expected to take the value as the first parameter (required) and the key as the second parameter (optional).
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; Add more core functions</p>
+<p>If <code>items</code> is an object: the function <code>func</code> is expected to take the value as the first parameter (required) and the key as the second parameter (optional).</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1697,6 +1696,60 @@
 </div>
 </div>
 <div class="sect2">
+<h3 id="_readstring_data_string_mimetype_object_params"><a class="anchor" href="#_readstring_data_string_mimetype_object_params"></a><code>read(string data, string mimeType, object params)</code></h3>
+<div class="paragraph">
+<p>Reads a string value as the given mimetype.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.read("{\"price\": 8.95}", "application/json", {})</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "price": 8.95
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_readurlstring_url"><a class="anchor" href="#_readurlstring_url"></a><code>readUrl(string url)</code></h3>
+<div class="paragraph">
+<p>Reads <code>url</code> and returns the content of the url, if it&#8217;s JSON.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.readUrl("http://httpbin.org/get")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "args": {},
+  "headers": {
+    "Accept": "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2",
+    "Host": "httpbin.org",
+    "User-Agent": "Java/14.0.1",
+    "X-Amzn-Trace-Id": "Root=1-5f7f568d-481e623471c21cc2686e53e8"
+  },
+  "origin": "69.250.49.68",
+  "url": "http://httpbin.org/get"
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_removeobject_obj_string_propname"><a class="anchor" href="#_removeobject_obj_string_propname"></a><code>remove(object obj, string propName)</code></h3>
 <div class="paragraph">
 <p>Removes property <code>propName</code> from <code>obj</code> and returns the remaining object.</p>
@@ -1739,9 +1792,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_reversearray_arr"><a class="anchor" href="#_reversearray_arr"></a><code>reverse(array arr)</code></h3>
+<h3 id="_removematcharrayobject_items_any_val"><a class="anchor" href="#_removematcharrayobject_items_any_val"></a><code>removeMatch(array|object items, any val</code></h3>
 <div class="paragraph">
-<p>Returns an array with elements of <code>arr</code> in reverse order.</p>
+<p>Given an array or an object <code>items</code> and <code>val</code> of the same type, will remove the matching values. If an object is used, both key and value must match.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1749,36 +1802,40 @@
 <div class="listingblock">
 <div class="title">Payload</div>
 <div class="content">
-<pre>[
-    "a",
-    "b",
-    "c",
-    "d"
-]</pre>
+<pre>{
+    "array": [1,2,3,4],
+    "obj": {"a":1,"b":2}
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.reverse(payload)</pre>
+<pre>{
+  array: ds.removeMatch(payload.array, [1,4]),
+  obj: ds.removeMatch(payload.obj, {a:1,b:3})
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre>[
-    "d",
-    "c",
-    "b",
-    "a",
-]</pre>
+<pre>{
+  "array": [
+    2,
+    3
+  ],
+  "obj": {
+    "b": 2
+  }
+}</pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_parsedoublestring_str_2"><a class="anchor" href="#_parsedoublestring_str_2"></a><code>parseDouble(string str)</code></h3>
+<h3 id="_replacestring_phrase_string_regex_string_replacement"><a class="anchor" href="#_replacestring_phrase_string_regex_string_replacement"></a><code>replace(string phrase, string regex, string replacement)</code></h3>
 <div class="paragraph">
-<p>Parses a string <code>str</code> which contains a double number and returns its numeric representation</p>
+<p>Replaces the matching <code>regex</code> with the <code>replacement</code> in the <code>phrase</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1787,7 +1844,46 @@
 <div class="title">Payload</div>
 <div class="content">
 <pre>{
-    "numberAsString": "123.45679"
+    "regex": "Hello",
+    "replacement": "Goodbye"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.replace("Hello World", payload.regex, payload.replacement)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"Goodbye World"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reversearrayobject_items"><a class="anchor" href="#_reversearrayobject_items"></a><code>reverse(array|object items)</code></h3>
+<div class="paragraph">
+<p>Given an array or object as <code>items</code>, reverses the order of the elements.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "array": [
+        1,
+        2,
+        3,
+        4
+    ],
+    "obj": {
+        "a":1,
+        "b":2
+    }
 }</pre>
 </div>
 </div>
@@ -1795,7 +1891,8 @@
 <div class="title">DataSonnet map:</div>
 <div class="content">
 <pre>{
-    num: ds.parseDouble(payload.numberAsString)
+  array: ds.reverse(payload.array),
+  obj: ds.reverse(payload.obj)
 }</pre>
 </div>
 </div>
@@ -1803,7 +1900,16 @@
 <div class="title">Result</div>
 <div class="content">
 <pre>{
-    "num": 123.45679
+  "array": [
+    4,
+    3,
+    2,
+    1
+  ],
+  "obj": {
+    "b": 2,
+    "a": 1
+  }
 }</pre>
 </div>
 </div>
