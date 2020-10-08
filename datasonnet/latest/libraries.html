@@ -1234,6 +1234,9 @@ but <code>2.1</code> would be <code>false</code>.</p>
 <p>Loops through all properties in <code>obj</code>, applies <code>func</code> to each, and returns a new object containing each result.</p>
 </div>
 <div class="paragraph">
+<p>The function <code>func</code> is expected to take the property value as the first parameter (required), the property key as the second (optional) and the index as the third (optional).</p>
+</div>
+<div class="paragraph">
 <p><strong>Example</strong></p>
 </div>
 <div class="listingblock">
@@ -1258,6 +1261,252 @@ but <code>2.1</code> would be <code>false</code>.</p>
   "origin": "PHX",
   "destination": "SEA"
 }</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_matchstring_str_string_regex"><a class="anchor" href="#_matchstring_str_string_regex"></a><code>match(string str, string regex)</code></h3>
+<div class="paragraph">
+<p>Executes the regex expression <code>regex</code> against <code>str</code> and returns an array with the match groups.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "email": "test@server.com"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.match(payload.email, "(.*)@(.*)(.com)")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>[
+  "test@server.com",
+  "test",
+  "server",
+  ".com"
+]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_matchesstring_str_string_regex"><a class="anchor" href="#_matchesstring_str_string_regex"></a><code>matches(string str, string regex)</code></h3>
+<div class="paragraph">
+<p>Executes the regex expression <code>regex</code> against <code>str</code> and returns <code>true</code> or <code>false</code> if the expression matches the input.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "email": "test@server.com"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.matches(payload.email, "(.*)@(.*)(.com)")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>true</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_maxarray_arr"><a class="anchor" href="#_maxarray_arr"></a><code>max(array arr)</code></h3>
+<div class="paragraph">
+<p>Returns the max value in <code>arr</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>[
+    5,
+    2,
+    7,
+    3
+]</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.max(payload)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>7</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_maxbyarray_arr_function_func"><a class="anchor" href="#_maxbyarray_arr_function_func"></a><code>maxBy(array arr, function func)</code></h3>
+<div class="paragraph">
+<p>Returns the max result of <code>func</code> in <code>arr</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the value as the first parameter (required).</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>[
+    {"age": 5},
+    {"age": 7},
+    {"age": 3}
+]</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.maxBy(payload, function(value) value.age)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "age": 7
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_minarray_arr"><a class="anchor" href="#_minarray_arr"></a><code>min(array arr)</code></h3>
+<div class="paragraph">
+<p>Returns the min value in <code>arr</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>[
+    5,
+    2,
+    7,
+    3
+]</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.min(payload)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>2</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_minbyarray_arr_function_func"><a class="anchor" href="#_minbyarray_arr_function_func"></a><code>minBy(array arr, function func)</code></h3>
+<div class="paragraph">
+<p>Returns the max result of <code>func</code> in <code>arr</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the value as the first parameter (required).</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>[
+    {"age": 5},
+    {"age": 7},
+    {"age": 3}
+]</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.minBy(payload, function(value) value.age)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "age": 3
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_orderbyarrayobject_arr_function_func"><a class="anchor" href="#_orderbyarrayobject_arr_function_func"></a><code>orderBy(array|object arr, function func)</code></h3>
+<div class="paragraph">
+<p>Reorders the array <code>arr</code> by the result of <code>func</code>.</p>
+</div>
+<div class="paragraph">
+<p>If <code>arr</code> is an array: the function <code>func</code> is expected to take the value as the first parameter (required).</p>
+</div>
+<div class="paragraph">
+<p>If <code>arr</code> is an object: the function <code>func</code> is expected to take the value as the first parameter (required) and the key as the second parameter (optional).</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>[
+    {"age": 5},
+    {"age": 7},
+    {"age": 3}
+]</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.orderBy(payload, function(value) value.age)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>[
+  {
+    "age": 3
+  },
+  {
+    "age": 5
+  },
+  {
+    "age": 7
+  }
+]</pre>
 </div>
 </div>
 </div>
