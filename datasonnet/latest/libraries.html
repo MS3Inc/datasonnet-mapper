@@ -210,23 +210,15 @@
 <p><strong>Example</strong></p>
 </div>
 <div class="listingblock">
-<div class="title">Payload</div>
-<div class="content">
-<pre>[
-    {
-        "name": "Java"
-    },
-    {
-        "version": "1.8"
-    }
-]</pre>
-</div>
-</div>
-<div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
 <pre>{
-    "language": ds.combine(payload[0], payload[1])
+    string: ds.combine("Hello ", "World"),
+    number: ds.combine(5, 7),
+    auto1: ds.combine("Hello ", 5),
+    auto2: ds.combine(5, "10"),
+    array: ds.combine([1,2], [3,4]),
+    obj: ds.combine({a:1}, {b:2})
 }</pre>
 </div>
 </div>
@@ -234,9 +226,19 @@
 <div class="title">Result</div>
 <div class="content">
 <pre>{
-  "language": {
-    "name": "Java",
-    "version": "1.8"
+  "string": "Hello World",
+  "number": "57",
+  "auto1": "Hello 5",
+  "auto2": "510",
+  "array": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "obj": {
+    "a": 1,
+    "b": 2
   }
 }</pre>
 </div>
@@ -291,7 +293,8 @@
 <div class="listingblock">
 <div class="title">Payload</div>
 <div class="content">
-<pre>[
+<pre>{
+  "array": [
     1,
     1,
     2,
@@ -301,25 +304,40 @@
     4,
     4,
     5
-]</pre>
+  ],
+  "obj": {
+    "a": 1,
+    "b": 2,
+    "c": 1
+  }
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.distinctBy(payload, function(value, index) value)</pre>
+<pre>{
+    array: ds.distinctBy(payload.array, function(item,index) item),
+    obj: ds.distinctBy(payload.obj, function(value,key) value)
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre>[
-  1,
-  2,
-  3,
-  4,
-  5
-]</pre>
+<pre>{
+  "array": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "obj": {
+    "a": 1,
+    "b": 2
+  }
+}</pre>
 </div>
 </div>
 </div>
@@ -475,26 +493,28 @@
 <div class="listingblock">
 <div class="title">Payload</div>
 <div class="content">
-<pre>[
-    2,
-    3,
-    5,
-    7
-]</pre>
+<pre>{
+    "string": "Hello World",
+    "array": [1,2,3,4]
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.find(payload, 2)</pre>
+<pre>{
+    string: ds.find(payload.string, "World"),
+    array: ds.find(payload.array, 3)
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre>[
-  0
-]</pre>
+<pre>{
+  "string": [6],
+  "array": [2]
+}</pre>
 </div>
 </div>
 </div>
@@ -647,29 +667,16 @@
 <div class="title">Payload</div>
 <div class="content">
 <pre>{
-  "languages": [
-    {
-      "name": "Foo",
-      "language": {
-          "name": "Java",
-          "version": "1.8"
-      }
-    },
-    {
-      "name": "Bar",
-      "language": {
-          "name": "Scala",
-          "version": "1.0"
-      }
-    },
-    {
-      "name": "FooBar",
-      "language": {
-          "name": "Java",
-          "version": "1.7"
-      }
+    "array": [
+        "a",
+        "b",
+        "a"
+    ],
+    "obj": {
+        "a":"Alpha",
+        "b":"Bravo",
+        "c": "Alpha"
     }
-  ]
 }</pre>
 </div>
 </div>
@@ -677,7 +684,8 @@
 <div class="title">DataSonnet map:</div>
 <div class="content">
 <pre>{
-  languageGroups: ds.groupBy(payload.languages, function(value, index) value.language.name)
+    array: ds.groupBy(payload.array, function(item,index) item ),
+    obj: ds.groupBy(payload.obj, function(value,key) value)
 }</pre>
 </div>
 </div>
@@ -685,33 +693,24 @@
 <div class="title">Result</div>
 <div class="content">
 <pre>{
-    "languageGroups": {
-       "Java": [
-          {
-             "language": {
-                "name": "Java",
-                "version": "1.8"
-             },
-             "name": "Foo"
-          },
-          {
-             "language": {
-                "name": "Java",
-                "version": "1.7"
-             },
-             "name": "FooBar"
-          }
-       ],
-       "Scala": [
-          {
-             "language": {
-                "name": "Scala",
-                "version": "1.0"
-             },
-             "name": "Bar"
-          }
-       ]
+  "array": {
+    "a": [
+      "a",
+      "a"
+    ],
+    "b": [
+      "b"
+    ]
+  },
+  "obj": {
+    "Alpha": {
+      "a": "Alpha",
+      "c": "Alpha"
+    },
+    "Bravo": {
+      "b": "Bravo"
     }
+  }
 }</pre>
 </div>
 </div>
@@ -757,23 +756,23 @@
 <p><strong>Example</strong></p>
 </div>
 <div class="listingblock">
-<div class="title">Payload</div>
-<div class="content">
-<pre>{
-   "airlineName": ""
-}</pre>
-</div>
-</div>
-<div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.isBlank(payload.airlineName)</pre>
+<pre>{
+    str1: ds.isBlank("     "),
+    str2: ds.isBlank(""),
+    'null': ds.isBlank(null)
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre>true</pre>
+<pre>{
+  "str1": true,
+  "str2": true,
+  "null": true
+}</pre>
 </div>
 </div>
 </div>
@@ -816,24 +815,23 @@
 <p><strong>Example</strong></p>
 </div>
 <div class="listingblock">
-<div class="title">Payload</div>
-<div class="content">
-<pre>{
-  "name": "Java",
-  "version": 1.8
-}</pre>
-</div>
-</div>
-<div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.isDecimal(payload.version)</pre>
+<pre>{
+    a: ds.isDecimal(2),
+    b: ds.isDecimal(2.0),
+    c: ds.isDecimal(2.1),
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre>true</pre>
+<pre>{
+  "a": false,
+  "b": false,
+  "c": true
+}</pre>
 </div>
 </div>
 </div>
@@ -846,21 +844,25 @@
 <p><strong>Example</strong></p>
 </div>
 <div class="listingblock">
-<div class="title">Payload</div>
-<div class="content">
-<pre>[]</pre>
-</div>
-</div>
-<div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.isEmpty(payload)</pre>
+<pre>{
+    "null": ds.isEmpty(null),
+    str: ds.isEmpty("    "),
+    array: ds.isEmpty([]),
+    obj: ds.isEmpty({})
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre>true</pre>
+<pre>{
+  "null": true,
+  "str": false,
+  "array": true,
+  "obj": true
+}</pre>
 </div>
 </div>
 </div>
@@ -1698,7 +1700,7 @@
 <div class="sect2">
 <h3 id="_readstring_data_string_mimetype_object_params"><a class="anchor" href="#_readstring_data_string_mimetype_object_params"></a><code>read(string data, string mimeType, object params)</code></h3>
 <div class="paragraph">
-<p>Reads a string value as the given mimetype.</p>
+<p>Reads a string <code>data</code> as the given <code>mimetype</code>.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1750,9 +1752,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_removeobject_obj_string_propname"><a class="anchor" href="#_removeobject_obj_string_propname"></a><code>remove(object obj, string propName)</code></h3>
+<h3 id="_removearrayobject_item_stringarray_value"><a class="anchor" href="#_removearrayobject_item_stringarray_value"></a><code>remove(array|object item, string|array value)</code></h3>
 <div class="paragraph">
-<p>Removes property <code>propName</code> from <code>obj</code> and returns the remaining object.</p>
+<p>Removes <code>value</code> from <code>item</code> and returns the remaining array or object.</p>
 </div>
 <div class="paragraph">
 <p><strong>Example</strong></p>
@@ -1761,33 +1763,41 @@
 <div class="title">Payload</div>
 <div class="content">
 <pre>{
-   "availableSeats": 45,
-   "airlineName": "Delta",
-   "aircraftBrand": "Boeing",
-   "aircraftType": "717",
-   "departureDate": "01/20/2019",
-   "origin": "PHX",
-   "destination": "SEA"
- }</pre>
+    "array": [
+        1,
+        2,
+        3,
+        4
+    ],
+    "obj": {
+        "a": 1,
+        "b": 2
+    }
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.remove(payload, 'availableSeats')</pre>
+<pre>{
+  array: ds.remove(payload.array, 3),
+  obj: ds.remove(payload.obj, "b")
+}</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
 <pre>{
-   "airlineName": "Delta",
-   "aircraftBrand": "Boeing",
-   "aircraftType": "717",
-   "departureDate": "01/20/2019",
-   "origin": "PHX",
-   "destination": "SEA"
- }</pre>
+  "array": [
+    1,
+    2,
+    4
+  ],
+  "obj": {
+    "a": 1
+  }
+}</pre>
 </div>
 </div>
 </div>
@@ -1911,6 +1921,473 @@
     "a": 1
   }
 }</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scanstring_str_string_regex"><a class="anchor" href="#_scanstring_str_string_regex"></a><code>scan(string str, string regex)</code></h3>
+<div class="paragraph">
+<p>Executes the regex expression <code>regex</code> against <code>str</code> and returns an array with each match as an array.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "email": "test@server.com"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.scan(payload.email, "(.*)@(.*)(.com)")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>[
+  [
+    "test@server.com",
+    "test",
+    "server",
+    ".com"
+  ]
+]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_selectobject_obj_string_path"><a class="anchor" href="#_selectobject_obj_string_path"></a><code>select(object obj, string path</code></h3>
+<div class="paragraph">
+<p>Returns a value inside <code>obj</code> by the provided <code>path</code>. For nested objects, the path is separated by a dot ('.').</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+  "language": {
+      "name": "Java",
+      "version": "1.8"
+  }
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>{
+  language: ds.select(payload, 'language.name')
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "language": "Java"
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sizeofany_val"><a class="anchor" href="#_sizeofany_val"></a><code>sizeOf(any val)</code></h3>
+<div class="paragraph">
+<p>Returns the size of <code>val</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "array": [1, 2],
+    "obj": {"prop": 2},
+    "string": "x"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>{
+    array: ds.sizeOf(payload.array),
+    object: ds.sizeOf(payload.obj),
+    'null': ds.sizeOf(null),
+    'function': ds.sizeOf(function(a,b,c) 1),
+    string: ds.sizeOf(payload.string)
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "array": 2,
+  "object": 1,
+  "null": 0,
+  "function": 3,
+  "string": 1
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_splitbystring_strtosplit_string_regex"><a class="anchor" href="#_splitbystring_strtosplit_string_regex"></a><code>splitBy(string strToSplit, string regex)</code></h3>
+<div class="paragraph">
+<p>Splits <code>strToSplit</code> into an array based on the matching <code>regex</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "string": "Hello World"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.splitBy(payload.string, " ")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>[
+  "Hello",
+  "World"
+]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_startswithstring_str_string_substr"><a class="anchor" href="#_startswithstring_str_string_substr"></a><code>startsWith(string str, string subStr)</code></h3>
+<div class="paragraph">
+<p>Checks if <code>str</code> starts with <code>subStr</code>. Ignores casing.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "string": "Hello World"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.startsWith(payload.string, "hello")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>true</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tostringany_val"><a class="anchor" href="#_tostringany_val"></a><code>toString(any val)</code></h3>
+<div class="paragraph">
+<p>Returns <code>val</code> to a string.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "num": 5
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.toString(payload.num)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"5"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_trimstring_str"><a class="anchor" href="#_trimstring_str"></a><code>trim(string str)</code></h3>
+<div class="paragraph">
+<p>Removes leading and trailing spaces in <code>str</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "string": "      Hello World       "
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.trim(payload.string)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"Hello World"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_typeofany_val"><a class="anchor" href="#_typeofany_val"></a><code>typeOf(any val)</code></h3>
+<div class="paragraph">
+<p>Returns a string describing the type of object <code>val</code> is.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>{
+    string: ds.typeOf(""),
+    bool: ds.typeOf(true),
+    "null": ds.typeOf(null),
+    number: ds.typeOf(0),
+    "function": ds.typeOf(function() 1),
+    array: ds.typeOf([]),
+    object: ds.typeOf({})
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "string": "string",
+  "bool": "boolean",
+  "null": "null",
+  "number": "number",
+  "function": "function",
+  "array": "array",
+  "object": "object"
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_unziparray_arr"><a class="anchor" href="#_unziparray_arr"></a><code>unzip(array arr)</code></h3>
+<div class="paragraph">
+<p>Unzips an array of arrays <code>arr</code> and creates a new array of arrays based on their index in <code>arr</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>[
+  [
+    1,
+    2
+  ],
+  [
+    1,
+    2
+  ]
+]</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.unzip(payload)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>[
+  [
+    1,
+    1
+  ],
+  [
+    2,
+    2
+  ]
+]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_upperstring_str"><a class="anchor" href="#_upperstring_str"></a><code>upper(string str)</code></h3>
+<div class="paragraph">
+<p>Converts a string to all uppercase characters.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "string": "HeLlO wOrLd"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.upper(payload.string)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"HELLO WORLD"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_uuid"><a class="anchor" href="#_uuid"></a><code>uuid</code></h3>
+<div class="paragraph">
+<p>Generates random alphanumeric uuid.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.uuid</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"cj36alpm-8mlt-fm43-8vth-mbd961259lqh"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_valuesofobject_obj"><a class="anchor" href="#_valuesofobject_obj"></a><code>valuesOf(object obj)</code></h3>
+<div class="paragraph">
+<p>Given an object <code>obj</code>, returns an array of the values inside <code>obj</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+   "origin": "PHX",
+   "destination": "SEA"
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.valuesOf(payload)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>[
+  "PHX",
+  "SEA"
+]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_writearrayobject_item_string_mimetype_object_params"><a class="anchor" href="#_writearrayobject_item_string_mimetype_object_params"></a><code>write(array|object item, string mimeType, object params)</code></h3>
+<div class="paragraph">
+<p>Converts <code>item</code> to a string.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "price": 8.95
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.write(payload, "application/json", {})</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"{\"price\":8.95}"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ziparray_array1_array_array2"><a class="anchor" href="#_ziparray_array1_array_array2"></a><code>zip(array array1, array array2)</code></h3>
+<div class="paragraph">
+<p>Accepts <code>array1</code> and <code>array2</code> and combines them into one using elements with matching indexes.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+    "firstNames": ["Evelyn", "Herman"],
+    "lastNames": ["Waugh" , "Melville", "Tolkien"]
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.zip(payload.firstNames, payload.lastNames)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>[
+  [
+    "Evelyn",
+    "Waugh"
+  ],
+  [
+    "Herman",
+    "Melville"
+  ]
+]</pre>
 </div>
 </div>
 </div>
