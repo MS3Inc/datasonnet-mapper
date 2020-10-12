@@ -158,6 +158,8 @@
 <li><a href="#_localdatetime">localdatetime</a></li>
 <li><a href="#_jsonpath">jsonpath</a></li>
 <li><a href="#_math">math</a></li>
+<li><a href="#_numbers">numbers</a></li>
+<li><a href="#_objects">objects</a></li>
 <li><a href="#_regex">regex</a></li>
 <li><a href="#_url">url</a></li>
 </ul>
@@ -3498,7 +3500,7 @@ All properties of the object can be removed using a <code>value</code> in the ar
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.binaries.readLinesWith("Hello World","UTF-8")</pre>
+<pre>ds.binaries.readLinesWith("Hello World", "UTF-8")</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -3561,7 +3563,7 @@ All properties of the object can be removed using a <code>value</code> in the ar
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.binaries.writeLinesWith(["Hello World"],"UTF-8")</pre>
+<pre>ds.binaries.writeLinesWith(["Hello World"], "UTF-8")</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4411,6 +4413,319 @@ mantissa = <code>num</code> * pow(2, -exponent)</p>
 <div class="title">Result</div>
 <div class="content">
 <pre>1.5574077246549023</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_numbers"><a class="anchor" href="#_numbers"></a>numbers</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_frombinarynumber_value"><a class="anchor" href="#_frombinarynumber_value"></a><code>fromBinary(number value)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> from binary to decimal.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.numbers.fromBinary(1100100)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>100</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fromhexnumber_value"><a class="anchor" href="#_fromhexnumber_value"></a><code>fromHex(number value)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> from hex to decimal.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.numbers.fromHex(64)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>100</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fromradixnumbernumber_value_number_baseasbinary"><a class="anchor" href="#_fromradixnumbernumber_value_number_baseasbinary"></a><code>fromRadixNumber(number value, number baseAsBinary)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> to a decimal with the base <code>baseAsBinary</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.numbers.fromRadixNumber(1101000, 2)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>104</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tobinarynumber_value"><a class="anchor" href="#_tobinarynumber_value"></a><code>toBinary(number value)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> from decimal to binary.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.numbers.toBinary(100)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"1100100"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tohexnumber_value"><a class="anchor" href="#_tohexnumber_value"></a><code>toHex(number value)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> from decimal to hex.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.numbers.toHex(100)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"64"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_toradixnumbernumber_value_number_baseasdecimal"><a class="anchor" href="#_toradixnumbernumber_value_number_baseasdecimal"></a><code>toRadixNumber(number value, number baseAsDecimal)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> to a number with the base <code>baseAsDecimal</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.numbers.toRadixNumber(104, 2)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"1101000"</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_objects"><a class="anchor" href="#_objects"></a>objects</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_dividebyobject_obj_number_num"><a class="anchor" href="#_dividebyobject_obj_number_num"></a><code>divideBy(object obj, number num)</code></h3>
+<div class="paragraph">
+<p>Creates an array of objects where each nested object has the specified number <code>num</code> of key-value pairs.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+  "a":1,
+  "b":2,
+  "c":3
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.objects.divideBy(payload, 2)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>[
+  {
+    "a": 1,
+    "b": 2
+  },
+  {
+    "c": 3
+  }
+]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_everyentryobject_obj_function_func"><a class="anchor" href="#_everyentryobject_obj_function_func"></a><code>everyEntry(object obj, function func)</code></h3>
+<div class="paragraph">
+<p>Returns a boolean depending on if all key-value pairs of <code>obj</code> pass the <code>func</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+  "a":1,
+  "b":2,
+  "c":1
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.objects.everyEntry(payload,function(value,key) value &lt; 2)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>false</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mergewithobject_obj1_object_obj2"><a class="anchor" href="#_mergewithobject_obj1_object_obj2"></a><code>mergeWith(object obj1, object obj2)</code></h3>
+<div class="paragraph">
+<p>Combines <code>obj1</code> and <code>obj2</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+  "obj1": {
+    "a":1
+  },
+  "obj2":{
+    "b":2
+  }
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.objects.mergeWith(payload.obj1,payload.obj2)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "a": 1,
+  "b": 2
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_someentryobject_obj_function_func"><a class="anchor" href="#_someentryobject_obj_function_func"></a><code>someEntry(object obj, function func)</code></h3>
+<div class="paragraph">
+<p>Returns a boolean depending on if at least one key-value pair passes the function <code>func</code>.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the property value as the first parameter (required) and  the property key as the second (required).</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+  "a":1,
+  "b":2,
+  "c":1
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.objects.someEntry(payload, function(value, key) value &lt; 2)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>true</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_takewhileobject_obj_function_func"><a class="anchor" href="#_takewhileobject_obj_function_func"></a><code>takeWhile(object obj, function func)</code></h3>
+<div class="paragraph">
+<p>Takes all key value pairs that result in true from the function. Stops on the first value that fails.</p>
+</div>
+<div class="paragraph">
+<p>The function <code>func</code> is expected to take the property value as the first parameter (required) and  the property key as the second (required).</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Payload</div>
+<div class="content">
+<pre>{
+  "a":1,
+  "b":2,
+  "c":1
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.objects.takeWhile(payload, function(value,key) value &lt; 2)</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>{
+  "a": 1
+}</pre>
 </div>
 </div>
 </div>
