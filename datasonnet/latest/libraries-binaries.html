@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Standard Library Documentation :: DataSonnet Mapper Documentation</title>
-    <link rel="canonical" href="https://MS3Inc.github.io/datasonnet-mapper/datasonnet/latest/jsonnet-doc.html">
+    <title>Untitled :: DataSonnet Mapper Documentation</title>
+    <link rel="canonical" href="https://MS3Inc.github.io/datasonnet-mapper/datasonnet/latest/libraries-binaries.html">
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -77,7 +77,7 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="headers.html">DataSonnet Header</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="jsonnet-doc.html">Standard Library Documentation</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -90,7 +90,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="libraries-arrays.html">Arrays</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="libraries-binaries.html">Binaries</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -181,16 +181,144 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">DataSonnet</a></li>
-    <li><a href="jsonnet-doc.html">Standard Library Documentation</a></li>
+    <li>Additional DataSonnet Libraries</li>
+    <li><a href="libraries-binaries.html">Binaries</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/MS3Inc/datasonnet-mapper/edit/main/docs/modules/ROOT/pages/jsonnet-doc.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/MS3Inc/datasonnet-mapper/edit/main/docs/modules/ROOT/pages/libraries-binaries.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Standard Library Documentation</h1>
+<div class="sect1">
+<h2 id="_binaries"><a class="anchor" href="#_binaries"></a>binaries</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_frombase64string_value"><a class="anchor" href="#_frombase64string_value"></a><code>fromBase64(string value)</code></h3>
 <div class="paragraph">
-<p>There&#8217;s a core standard library that is shared by all JSonnet implementations, including DataSonnet, that has many useful functions. There are small differences in versions and the like, so eventually it will be completely documented here. But for now you can view that documentation on the JSonnet Website which can be found at this link: <a href="https://jsonnet.org/ref/stdlib.html">Standard Library Documentation</a>.</p>
+<p>Converts <code>value</code> from base64.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.binaries.fromBase64("SGVsbG8gV29ybGQ=")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"Hello World"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_fromhexstring_value"><a class="anchor" href="#_fromhexstring_value"></a><code>fromHex(string value)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> from hexadecimal.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.binaries.fromHex("48656C6C6F20576F726C64")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"Hello World"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_readlineswithstring_value_string_encoding"><a class="anchor" href="#_readlineswithstring_value_string_encoding"></a><code>readLinesWith(string value, string encoding)</code></h3>
+<div class="paragraph">
+<p>Reads <code>value</code> with the specified encoding <code>encoding</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.binaries.readLinesWith("Hello World", "UTF-8")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>["Hello World"]</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tobase64any_value"><a class="anchor" href="#_tobase64any_value"></a><code>toBase64(any value)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> to base 64.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.binaries.toBase64("Hello World")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"SGVsbG8gV29ybGQ="</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tohexany_value"><a class="anchor" href="#_tohexany_value"></a><code>toHex(any value)</code></h3>
+<div class="paragraph">
+<p>Converts <code>value</code> to hexadecimal.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.binaries.toHex("Hello World")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"48656C6C6F20576F726C64"</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_writelineswithstring_value_string_encoding"><a class="anchor" href="#_writelineswithstring_value_string_encoding"></a><code>writeLinesWith(string value, string encoding)</code></h3>
+<div class="paragraph">
+<p>Writes <code>value</code> with the specified encoding <code>encoding</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">DataSonnet map:</div>
+<div class="content">
+<pre>ds.binaries.writeLinesWith(["Hello World"], "UTF-8")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre>"Hello World\n"</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">

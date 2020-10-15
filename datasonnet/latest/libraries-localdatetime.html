@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Standard Library Documentation :: DataSonnet Mapper Documentation</title>
-    <link rel="canonical" href="https://MS3Inc.github.io/datasonnet-mapper/datasonnet/latest/jsonnet-doc.html">
+    <title>Untitled :: DataSonnet Mapper Documentation</title>
+    <link rel="canonical" href="https://MS3Inc.github.io/datasonnet-mapper/datasonnet/latest/libraries-localdatetime.html">
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../_/css/site.css">
   </head>
@@ -77,7 +77,7 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="headers.html">DataSonnet Header</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="jsonnet-doc.html">Standard Library Documentation</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -102,7 +102,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="libraries-jsonpath.html">JsonPath</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="libraries-localdatetime.html">LocalDateTime</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -181,16 +181,104 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">DataSonnet</a></li>
-    <li><a href="jsonnet-doc.html">Standard Library Documentation</a></li>
+    <li>Additional DataSonnet Libraries</li>
+    <li><a href="libraries-localdatetime.html">LocalDateTime</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/MS3Inc/datasonnet-mapper/edit/main/docs/modules/ROOT/pages/jsonnet-doc.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/MS3Inc/datasonnet-mapper/edit/main/docs/modules/ROOT/pages/libraries-localdatetime.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Standard Library Documentation</h1>
+<div class="sect1">
+<h2 id="_localdatetime"><a class="anchor" href="#_localdatetime"></a>localdatetime</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_now"><a class="anchor" href="#_now"></a><code>now()</code></h3>
 <div class="paragraph">
-<p>There&#8217;s a core standard library that is shared by all JSonnet implementations, including DataSonnet, that has many useful functions. There are small differences in versions and the like, so eventually it will be completely documented here. But for now you can view that documentation on the JSonnet Website which can be found at this link: <a href="https://jsonnet.org/ref/stdlib.html">Standard Library Documentation</a>.</p>
+<p>Returns the current date/time from the system UTC clock in ISO-8601 format without a time zone.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+    currentLocalTime: ds.localdatetime.now()
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result:</div>
+<div class="content">
+<pre>{
+    "currentLocalTime": "2019-08-19T18:58:38.313"
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_offsetstring_datetime_string_period"><a class="anchor" href="#_offsetstring_datetime_string_period"></a><code>offset(string datetime, string period)</code></h3>
+<div class="paragraph">
+<p>Returns a copy of <code>datetime</code> with the specified amount added. The <code>datetime</code> parameter is in the ISO-8601 format without an offset.
+The <code>period</code> is a string in the ISO-8601 period format.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>ds.localdatetime.offset("2019-07-22T21:00:00", "P1Y1D")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result:</div>
+<div class="content">
+<pre>2020-07-23T21:00:00</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_formatstring_datetime_string_inputformat_string_outputformat"><a class="anchor" href="#_formatstring_datetime_string_inputformat_string_outputformat"></a><code>format(string datetime, string inputFormat, string outputFormat)</code></h3>
+<div class="paragraph">
+<p>Reformats a local date-time string.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>ds.localdatetime.format("2019-07-04T21:00:00", "yyyy-MM-dd'T'HH:mm:ss", "d MMM uuuu")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result:</div>
+<div class="content">
+<pre>4 Jul 2019</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_comparestring_datetime1_string_format1_string_datetime2_string_format2"><a class="anchor" href="#_comparestring_datetime1_string_format1_string_datetime2_string_format2"></a><code>compare(string datetime1, string format1, string datetime2, string format2)</code></h3>
+<div class="paragraph">
+<p>Returns <code>1</code> if <code>datetime1 &gt; datetime2</code>, <code>-1</code> if <code>datetime1 &lt; datetime2</code>, and <code>0</code> if <code>datetime1 == datetime2</code>.
+The <code>format1</code> and <code>format2</code> parameters must not have an offset or time zone.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>ds.localdatetime.compare("2019-07-04T21:00:00", "yyyy-MM-dd'T'HH:mm:ss", "2019-07-04T21:00:00", "yyyy-MM-dd'T'HH:mm:ss")</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result:</div>
+<div class="content">
+<pre>0</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
