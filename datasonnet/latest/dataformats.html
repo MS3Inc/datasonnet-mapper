@@ -227,7 +227,7 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>DS.Formats.read(payload.embeddedXMLValue, "application/xml")</pre>
+<pre>ds.read(payload.embeddedXMLValue, "application/xml")</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -244,7 +244,7 @@
     "AttributeCharacter": "*"
 };
 
-DS.Formats.read(payload.embeddedXMLValue, "application/xml", params);</pre>
+ds.read(payload.embeddedXMLValue, "application/xml", params);</pre>
 </div>
 </div>
 </div>
@@ -258,7 +258,7 @@ DS.Formats.read(payload.embeddedXMLValue, "application/xml", params);</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>DS.Formats.write(payload.embeddedXMLValue, "application/xml")</pre>
+<pre>ds.write(payload.embeddedXMLValue, "application/xml")</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -277,7 +277,7 @@ DS.Formats.read(payload.embeddedXMLValue, "application/xml", params);</pre>
     "AutoEmptyElements": false
 };
 
-DS.Formats.write(payload.someObj, "application/xml", params);</pre>
+ds.write(payload.someObj, "application/xml", params);</pre>
 </div>
 </div>
 </div>
@@ -359,7 +359,7 @@ DS.Formats.write(payload.someObj, "application/xml", params);</pre>
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>DS.Formats.read(payload.embeddedXMLValue, "application/xml")</pre>
+<pre>ds.read(payload.embeddedXMLValue, "application/xml")</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -492,7 +492,7 @@ DS.Formats.write(payload.someObj, "application/xml", params);</pre>
     "AttributeCharacter": "*"
 };
 
-DS.Formats.read(payload.embeddedXMLValue, "application/xml", params);</pre>
+ds.read(payload.embeddedXMLValue, "application/xml", params);</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -589,7 +589,7 @@ DS.Formats.read(payload.embeddedXMLValue, "application/xml", params);</pre>
 <div class="title">DataSonnet map:</div>
 <div class="content">
 <pre>{
-    embeddedXMLValue: DS.Formats.write(payload, "application/xml")
+    embeddedXMLValue: ds.write(payload, "application/xml")
 }</pre>
 </div>
 </div>
@@ -707,7 +707,7 @@ DS.Formats.read(payload.embeddedXMLValue, "application/xml", params);</pre>
 };
 
 {
-    embeddedXMLValue: DS.Formats.write(payload, "application/xml")
+    embeddedXMLValue: ds.write(payload, "application/xml")
 }</pre>
 </div>
 </div>
@@ -760,7 +760,7 @@ Christopher,Marlow,"(987)654-3210"</pre>
 <div class="title">DataSonnet map:</div>
 <div class="content">
 <pre>{
-    local csvInput = DS.Formats.read(payload.embeddedCSVValue, "application/csv");
+    local csvInput = ds.read(payload.embeddedCSVValue, "application/csv");
 
     {
         name: csvInput[0]["First Name"] + " " + csvInput[0]["Last Name"]
@@ -871,7 +871,7 @@ Christopher,Marlow,"(987)654-3210"</pre>
     "NewLine": "\n"
 };
 
-local csvInput = DS.Formats.read(payload.embeddedCSVValue, "application/csv", params);
+local csvInput = ds.read(payload.embeddedCSVValue, "application/csv", params);
 
 {
     name: csvInput[0][0] + " " + csvInput[0][1]
@@ -916,7 +916,7 @@ local csvInput = DS.Formats.read(payload.embeddedCSVValue, "application/csv", pa
 <div class="title">DataSonnet map:</div>
 <div class="content">
 <pre>{
-    embeddedCSVValue: DS.Formats.write(payload, "application/csv")
+    embeddedCSVValue: ds.write(payload, "application/csv")
 }</pre>
 </div>
 </div>
@@ -970,7 +970,7 @@ local csvInput = DS.Formats.read(payload.embeddedCSVValue, "application/csv", pa
 };
 
 {
-    embeddedCSVValue: DS.Formats.write(payload, "application/csv", params)
+    embeddedCSVValue: ds.write(payload, "application/csv", params)
 }</pre>
 </div>
 </div>
