@@ -193,14 +193,12 @@
 <div class="sectionbody">
 <div class="paragraph">
 <p>The header is an optional comment section in the mapping document which must start with <code>/** DataSonnet</code> followed by a new line character and end with a line <code>*/</code> and contains a set of configuration properties.
-The properties are hierarchical, with sections separated by the <code>.</code> (dot) character, e.g.:</p>
+The properties are hierarchical, with sections separated by the ` ` (space) character, e.g.:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>input.payload.application/xml.NamespaceSeparator=:
-input.payload.application/xml.TextValueKey=__text
-input.myVar.application/csv.Quote="
-input.myVar.application/csv.Separator=|</pre>
+<pre>input payload application/xml;namespace-separator=":"
+input myVar application/csv;quote="""</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -239,7 +237,7 @@ version=1.0
 <div class="sectionbody">
 <div class="paragraph">
 <p>The data format properties control the data format plugins behavior. The property names must start with one of <code>input|output|*</code>.
-The input properties format must be <code>input.&lt;INPUT_NAME&gt;|*.&lt;MIME_TYPE&gt;.&lt;MIME_TYPE_SPECIFIC_PARAMETER&gt;</code>, where:</p>
+The input properties format must be <code>input &lt;INPUT_NAME&gt;|* &lt;MIME_TYPE&gt;;&lt;MIME_TYPE_SPECIFIC_PARAMETER&gt;</code>, where:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -257,27 +255,12 @@ The input properties format must be <code>input.&lt;INPUT_NAME&gt;|*.&lt;MIME_TY
 <div class="paragraph">
 <p>If a property is not recognized, an error will be raised.</p>
 </div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-if the mime type contains the dot (<code>.</code>) character, it must be escaped with a backslash (<code>\</code>). For example, <code>dataformat.application/vnd\.ms-excel.payload.param=xyz</code>.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Keys may not contain double backslashes (<code>\\</code>), though values may.</p>
-</div>
 <div class="paragraph">
 <p>The wildcard <code>*</code> can be used to set the same parameter value for all inputs and output of the given format, instead of defining it explicitly. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>*.application/csv.Separator=|</pre>
+<pre>* application/csv;separator="|"</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -285,9 +268,9 @@ if the mime type contains the dot (<code>.</code>) character, it must be escaped
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>input.payload.application/csv.Separator=|
-input.myVar.application/csv.Separator=|
-output.application/csv.Separator=|</pre>
+<pre>input payload application/csv;separator="|"
+input myVar application/csv;separator="|"
+output application/csv;separator="|"</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -295,8 +278,8 @@ output.application/csv.Separator=|</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>input.*.application/csv.Separator=|
-output.application/csv.Separator=,</pre>
+<pre>input * application/csv;separator="|"
+output application/csv;separator=","</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -304,8 +287,8 @@ output.application/csv.Separator=,</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>dataformat.application/csv.*.Separator=|
-dataformat.application/csv.commaSeparatedVar.Separator=,</pre>
+<pre>dataformat application/csv;*.separator="|"
+dataformat application/csv;commaSeparatedVar.separator=","</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -348,7 +331,7 @@ dataformat.application/csv.commaSeparatedVar.Separator=,</pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>output.preserveOrder</code></p>
+<p><code>preserveOrder</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Controls whether order of fields as they appear in the mapping will be preserved in the resulting JSON.</p>
