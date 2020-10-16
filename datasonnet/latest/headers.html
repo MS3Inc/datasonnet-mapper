@@ -197,7 +197,7 @@ The properties are hierarchical, with sections separated by the ` ` (space) char
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>input payload application/xml;namespace-separator=":"
+<pre>input payload application/xml;namespace-separator=":";text-value-key=__text
 input myVar application/csv;quote="""</pre>
 </div>
 </div>
@@ -253,6 +253,9 @@ The input properties format must be <code>input &lt;INPUT_NAME&gt;|* &lt;MIME_TY
 </ul>
 </div>
 <div class="paragraph">
+<p>Additional <code>&lt;MIME_TYPE_SPECIFIC_PARAMETER&gt;`s can be added with a `;</code> (semicolon). The values that should be escaped with quotes are <code>;</code> (semicolon), <code>:</code> (colon),  <code>"</code> (quote) and <code>,</code> (comma).</p>
+</div>
+<div class="paragraph">
 <p>If a property is not recognized, an error will be raised.</p>
 </div>
 <div class="paragraph">
@@ -260,7 +263,7 @@ The input properties format must be <code>input &lt;INPUT_NAME&gt;|* &lt;MIME_TY
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>* application/csv;separator="|"</pre>
+<pre>* application/csv;separator=|</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -268,9 +271,9 @@ The input properties format must be <code>input &lt;INPUT_NAME&gt;|* &lt;MIME_TY
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>input payload application/csv;separator="|"
-input myVar application/csv;separator="|"
-output application/csv;separator="|"</pre>
+<pre>input payload application/csv;separator=|
+input myVar application/csv;separator=|
+output application/csv;separator=|</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -278,7 +281,7 @@ output application/csv;separator="|"</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>input * application/csv;separator="|"
+<pre>input * application/csv;separator=|
 output application/csv;separator=","</pre>
 </div>
 </div>
@@ -287,7 +290,7 @@ output application/csv;separator=","</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>dataformat application/csv;*.separator="|"
+<pre>dataformat application/csv;*.separator=|
 dataformat application/csv;commaSeparatedVar.separator=","</pre>
 </div>
 </div>
