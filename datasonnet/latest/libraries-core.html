@@ -641,7 +641,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_foldleftarray_arr_function_func_any_initval"><a class="anchor" href="#_foldleftarray_arr_function_func_any_initval"></a><code>foldLeft(array arr, function func, any initVal)</code></h3>
+<h3 id="_foldleftarray_arr_any_initval_function_func"><a class="anchor" href="#_foldleftarray_arr_any_initval_function_func"></a><code>foldLeft(array arr, any initVal, function func)</code></h3>
 <div class="paragraph">
 <p>Iterates over <code>arr</code>, applying <code>func</code> to the previous result. Starts with the value provided in <code>initVal</code>.</p>
 </div>
@@ -665,7 +665,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.foldLeft(payload, function(curr, prev) curr * prev, 1)</pre>
+<pre>ds.foldLeft(payload, 1, function(curr, prev) curr * prev)</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -682,7 +682,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_foldrightarray_arr_function_func_any_initval"><a class="anchor" href="#_foldrightarray_arr_function_func_any_initval"></a><code>foldRight(array arr, function func, any initVal)</code></h3>
+<h3 id="_foldrightarray_arr_any_initval_function_func"><a class="anchor" href="#_foldrightarray_arr_any_initval_function_func"></a><code>foldRight(array arr, any initVal, function func)</code></h3>
 <div class="paragraph">
 <p>Iterates backwards over an array, applying <code>func</code> to the previous result. Starts with the value provided in <code>initVal</code>.</p>
 </div>
@@ -706,7 +706,7 @@
 <div class="listingblock">
 <div class="title">DataSonnet map:</div>
 <div class="content">
-<pre>ds.foldRight(payload, function(curr, prev) curr * prev, 1)</pre>
+<pre>ds.foldRight(payload, 1, function(curr, prev) curr * prev)</pre>
 </div>
 </div>
 <div class="listingblock">
