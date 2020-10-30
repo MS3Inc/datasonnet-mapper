@@ -22,17 +22,22 @@ import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
 import com.datasonnet.plugins.jackson.JAXBElementMixIn;
 import com.datasonnet.plugins.jackson.JAXBElementSerializer;
+import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.PluginException;
 import com.datasonnet.spi.ujsonUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import scala.Tuple2;
+import scala.collection.mutable.GrowableBuilder;
+import scala.collection.mutable.LinkedHashMap;
 import ujson.Value;
 
 import javax.xml.bind.JAXBElement;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class DefaultJavaFormatPlugin extends BaseJacksonDataFormatPlugin {
@@ -70,11 +75,43 @@ public class DefaultJavaFormatPlugin extends BaseJacksonDataFormatPlugin {
     }
 
     @Override
-    public Value read(Document<?> doc) throws PluginException {
+    public Value read(Document<?> doc, DataFormatService service) throws PluginException {
         if (doc.getContent() == null) {
             return ujson.Null$.MODULE$;
         }
 
+		if (doc.getContent() instanceof Map) {
+			Iterator<? extends Map.Entry<?, ?>> it = ((Map<?, ?>) doc.getContent()).entrySet().iterator();
+			if (it.hasNext()) {
+				Map.Entry<?, ?> firstEntry = it.next();
+				if (firstEntry.getKey() instanceof String && firstEntry.getValue() instanceof Document) {
+					GrowableBuilder<Tuple2<String, Value>, LinkedHashMap<String, Value>> builder = LinkedHashMap.newBuilder();
+					builder.addOne(Tuple2.apply((String) firstEntry.getKey(),
+							service.thatAccepts((Document<?>) firstEntry.getValue())
+									.orElseThrow(() -> new PluginException("Cannot read nested doc!"))
+									.read((Document<?>) firstEntry.getValue(), service)
+							)
+					);
+
+					while (it.hasNext()) {
+						Map.Entry<?, ?> entry = it.next();
+						builder.addOne(Tuple2.apply((String) entry.getKey(),
+								service.thatAccepts((Document<?>) entry.getValue())
+										.orElseThrow(() -> new PluginException("Cannot read nested doc!"))
+										.read((Document<?>) entry.getValue(), service)
+								)
+						);
+					}
+
+					return new ujson.Obj(builder.result());
+				}
+			}
+		}
+
+        return doRead(doc);
+    }
+
+    private Value doRead(Document<?> doc) {
         ObjectMapper mapper = DEFAULT_OBJECT_MAPPER;
 
         if (doc.getMediaType().getParameters().containsKey(DS_PARAM_DATE_FORMAT)) {

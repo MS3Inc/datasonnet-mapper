@@ -2196,7 +2196,7 @@ object DS extends Library {
     val plugin = dataFormats.thatAccepts(doc)
       .orElseThrow(() => Error.Delegate("No suitable plugin found for mime type: " + mimeType))
 
-    Materializer.reverse(plugin.read(doc))
+    Materializer.reverse(plugin.read(doc, dataFormats))
   }
 
   private def write(dataFormats: DataFormatService, json: Val, mimeType: String, params: Val.Obj, ev: EvalScope): String = {

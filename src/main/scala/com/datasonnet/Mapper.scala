@@ -220,7 +220,7 @@ class Mapper(var script: String,
     def valueFrom(doc: Document[_]): Value = {
       dataFormats.thatAccepts(doc)
         .orElseThrow(() => new IllegalArgumentException("The input mime type " + payload.getMediaType + " is not supported"))
-        .read(doc)
+        .read(doc, dataFormats)
     }
 
     val payloadExpr: Expr = Materializer.toExpr(valueFrom(effectiveInput("payload", payload)))

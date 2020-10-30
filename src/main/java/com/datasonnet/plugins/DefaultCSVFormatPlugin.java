@@ -20,6 +20,7 @@ import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
+import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.PluginException;
 import com.datasonnet.spi.ujsonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -83,7 +84,7 @@ public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
     }
 
     @Override
-    public Value read(Document<?> doc) throws PluginException {
+    public Value read(Document<?> doc, DataFormatService service) throws PluginException {
         if (doc.getContent() == null) {
             return ujson.Null$.MODULE$;
         }
