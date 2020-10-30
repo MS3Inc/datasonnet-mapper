@@ -86,21 +86,11 @@ public class DefaultJavaFormatPlugin extends BaseJacksonDataFormatPlugin {
 				Map.Entry<?, ?> firstEntry = it.next();
 				if (firstEntry.getKey() instanceof String && firstEntry.getValue() instanceof Document) {
 					GrowableBuilder<Tuple2<String, Value>, LinkedHashMap<String, Value>> builder = LinkedHashMap.newBuilder();
-					builder.addOne(Tuple2.apply((String) firstEntry.getKey(),
-							service.thatAccepts((Document<?>) firstEntry.getValue())
-									.orElseThrow(() -> new PluginException("Cannot read nested doc!"))
-									.read((Document<?>) firstEntry.getValue(), service)
-							)
-					);
+					builder.addOne(Tuple2.apply((String) firstEntry.getKey(), service.mandatoryRead((Document<?>) firstEntry.getValue())));
 
 					while (it.hasNext()) {
 						Map.Entry<?, ?> entry = it.next();
-						builder.addOne(Tuple2.apply((String) entry.getKey(),
-								service.thatAccepts((Document<?>) entry.getValue())
-										.orElseThrow(() -> new PluginException("Cannot read nested doc!"))
-										.read((Document<?>) entry.getValue(), service)
-								)
-						);
+						builder.addOne(Tuple2.apply((String) entry.getKey(), service.mandatoryRead((Document<?>) entry.getValue())));
 					}
 
 					return new ujson.Obj(builder.result());
