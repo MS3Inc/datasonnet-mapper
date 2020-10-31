@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-
 public class Header {
     public static final String DATASONNET_HEADER = "/** DataSonnet";
     public static final String DATASONNET_VERSION = "version";
