@@ -88,6 +88,7 @@
         <quickcheck.version>0.9.4</quickcheck.version>
         <xmlunit.version>2.7.0</xmlunit.version>
         <mycila.version>4.0.rc2</mycila.version>
+        <jmh.version>1.23</jmh.version>
     </properties>
 
     <dependencies>
@@ -235,6 +236,18 @@
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <version>1.5.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- test deps: end -->
@@ -398,8 +411,33 @@
                     <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>benchmarks</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <classpathScope>test</classpathScope>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-classpath</argument>
+                                <classpath/>
+                                <!--<argument>org.openjdk.jmh.Main</argument>-->
+                                <argument>com.datasonnet.benchmarks.BenchmarkMain</argument>
+                                <argument>-f</argument>
+                                <argument>target/jmh-reports/jmh-benchmark-report.csv</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
 
     <profiles>
         <profile>

@@ -21,6 +21,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Package and run benchmarks
+        run: |
+          mvn clean package -DskipTests exec:exec@benchmarks
+          echo -e "\"$(date +"%a %d %b %Y")\",\"Processes: $(ps aux | wc -l)\",\"RELEASE\"\n$(cat target/jmh-reports/jmh-benchmark-report.csv)\n\n$(cat BENCHMARKS.csv)" > BENCHMARKS.csv
       - name: setup git
         run: |
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"

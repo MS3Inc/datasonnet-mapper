@@ -21,7 +21,7 @@ import java.net.URL
 import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.{Duration, Period, ZoneId, ZonedDateTime}
+import java.time.{DateTimeException, Duration, LocalDateTime, Period, ZoneId, ZonedDateTime}
 import java.util.function.Function
 import java.util.{Base64, Scanner}
 
@@ -763,7 +763,12 @@ object DS extends Library {
       builtin0("now") { (vals, ev, fs) => ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME) },
 
       builtin("parse", "datetime", "inputFormat") { (_, _, datetime: String, inputFormat: String) =>
-        val datetimeObj = java.time.ZonedDateTime.parse(datetime, DateTimeFormatter.ofPattern(inputFormat))
+        val datetimeObj = try{
+          java.time.ZonedDateTime.parse(datetime, DateTimeFormatter.ofPattern(inputFormat))
+        } catch {
+          case e: DateTimeException =>
+            LocalDateTime.parse(datetime, DateTimeFormatter.ofPattern(inputFormat)).atZone(ZoneId.of("Z"))
+        }
         datetimeObj.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
       },
 
