@@ -101,16 +101,6 @@ public class HeaderTest {
     }
 
     @Test
-    void testUnknownHeaderFails() {
-        assertThrows(HeaderParseException.class,  ()  -> {
-           Header.parseHeader("/** DataSonnet\n" +
-                   "version=2.0\n" +
-                   "nonsense\n" +
-                   "*/");
-        });
-    }
-
-    @Test
     void testUnterminatedHeaderFailsNicely() {
         assertThrows(HeaderParseException.class,  ()  -> {
             Header.parseHeader("/** DataSonnet\n" +

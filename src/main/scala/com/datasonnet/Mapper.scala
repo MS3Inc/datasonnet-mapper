@@ -183,7 +183,7 @@ class Mapper(var script: String,
       header.combineOutputParams(output)
     } else {
       val fromHeader = header.getOutput
-      if (fromHeader != null && !fromHeader.equalsTypeAndSubtype(MediaTypes.ANY)) header.combineOutputParams(fromHeader)
+      if (fromHeader.isPresent && !fromHeader.get.equalsTypeAndSubtype(MediaTypes.ANY)) header.combineOutputParams(fromHeader.get)
       else header.combineOutputParams(defaultOutput)
     }
   }

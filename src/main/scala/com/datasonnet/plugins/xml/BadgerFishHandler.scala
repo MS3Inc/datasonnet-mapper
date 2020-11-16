@@ -16,11 +16,9 @@ package com.datasonnet.plugins.xml
  * limitations under the License.
  */
 
-import com.datasonnet.plugins.DefaultXMLFormatPlugin
 import com.datasonnet.plugins.DefaultXMLFormatPlugin.{DEFAULT_NS_KEY, EffectiveParams}
 import org.xml.sax.ext.DefaultHandler2
 import org.xml.sax.{Attributes, SAXParseException}
-import ujson.Value
 
 import scala.collection.mutable
 
@@ -122,7 +120,7 @@ class BadgerFishHandler(params: EffectiveParams) extends DefaultHandler2 {
     val current = badgerStack.pop
     val parent = badgerStack.top.obj.value
 
-    if(params.dsVersion == "1.0" && hasText(current)) {
+    if (false && hasText(current)) {
       // TODO render XML elements of mixed content inline with this text?
       // would help ease a use case of mixed content; carrying
       // marked up content
