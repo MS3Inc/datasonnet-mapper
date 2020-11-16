@@ -75,6 +75,6 @@ public class DataFormatService {
     public ujson.Value mandatoryRead(Document<?> doc) throws PluginException {
         return thatAccepts(doc)
                 .orElseThrow(() -> new IllegalArgumentException("The input MediaType " + doc.getMediaType() + " is not supported for class" + doc.getContent().getClass()))
-                .read(doc, this);
+                .read(doc);
     }
 }

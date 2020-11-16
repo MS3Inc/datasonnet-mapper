@@ -21,7 +21,6 @@ import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
 import com.datasonnet.spi.AbstractDataFormatPlugin;
-import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.PluginException;
 import com.datasonnet.spi.ujsonUtils;
 import ujson.Value;
@@ -34,7 +33,7 @@ public class DefaultPlainTextFormatPlugin extends AbstractDataFormatPlugin {
         writerSupportedClasses.add(String.class);
     }
 
-    public Value read(Document<?> doc, DataFormatService service) throws PluginException {
+    public Value read(Document<?> doc) throws PluginException {
         if (doc.getContent() == null) {
             return ujson.Null$.MODULE$;
         }

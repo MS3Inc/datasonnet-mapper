@@ -23,7 +23,7 @@ import java.nio.charset.Charset
 import com.datasonnet.document
 import com.datasonnet.document.{DefaultDocument, MediaType, MediaTypes}
 import com.datasonnet.plugins.xml.XML
-import com.datasonnet.spi.{AbstractDataFormatPlugin, DataFormatService, PluginException}
+import com.datasonnet.spi.{AbstractDataFormatPlugin, PluginException}
 import ujson.Value
 
 import scala.collection.mutable
@@ -85,7 +85,7 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
   writerSupportedClasses.add(classOf[OutputStream].asInstanceOf[java.lang.Class[_]])
 
   @throws[PluginException]
-  override def read(doc: document.Document[_], service: DataFormatService): Value = {
+  override def read(doc: document.Document[_]): Value = {
     if (doc.getContent == null) return ujson.Null
 
     val effectiveParams = EffectiveParams(doc.getMediaType)
