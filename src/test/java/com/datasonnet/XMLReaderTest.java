@@ -20,7 +20,6 @@ import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
 import com.datasonnet.util.TestResourceReader;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -37,7 +36,6 @@ public class XMLReaderTest {
         mapAndAssertFull("xmlNonAscii.xml", "xmlNonAscii.json");
     }
 
-    @Disabled
     @Test
     void testOverrideNamespaces() throws Exception {
         String xml = "<a xmlns='http://example.com/1' xmlns:b='http://example.com/2'><b:b/></a>";
