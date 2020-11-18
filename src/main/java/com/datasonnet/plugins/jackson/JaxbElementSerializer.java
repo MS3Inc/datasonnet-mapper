@@ -23,13 +23,13 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import javax.xml.bind.JAXBElement;
 import java.io.IOException;
 
-public class JAXBElementSerializer extends StdSerializer<JAXBElement> {
+public class JaxbElementSerializer extends StdSerializer<JAXBElement> {
 
-    public JAXBElementSerializer() {
+    public JaxbElementSerializer() {
         this(null);
     }
 
-    public JAXBElementSerializer(Class<JAXBElement> t) {
+    public JaxbElementSerializer(Class<JAXBElement> t) {
         super(t);
     }
 

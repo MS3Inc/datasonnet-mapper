@@ -18,7 +18,7 @@ package com.datasonnet.plugins.xml
 
 import java.io.{StringWriter, Writer}
 
-import com.datasonnet.plugins.DefaultXMLFormatPlugin.EffectiveParams
+import com.datasonnet.plugins.DefaultXmlFormatPlugin.EffectiveParams
 import org.xml.sax.helpers.NamespaceSupport
 import ujson.Obj
 

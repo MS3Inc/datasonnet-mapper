@@ -16,13 +16,14 @@ package com.datasonnet.plugins
  * limitations under the License.
  */
 
-import java.io._
+
+import java.io.{BufferedOutputStream, ByteArrayOutputStream, File, InputStream, OutputStream, OutputStreamWriter, StringWriter}
 import java.net.URL
 import java.nio.charset.Charset
 
 import com.datasonnet.document
 import com.datasonnet.document.{DefaultDocument, MediaType, MediaTypes}
-import com.datasonnet.plugins.xml.XML
+import com.datasonnet.plugins.xml.Xml
 import com.datasonnet.spi.{AbstractDataFormatPlugin, PluginException}
 import ujson.Value
 
@@ -32,7 +33,7 @@ import scala.jdk.CollectionConverters.MapHasAsScala
 // See: http://wiki.open311.org/JSON_and_XML_Conversion/#the-badgerfish-convention
 // http://www.sklar.com/badgerfish/
 // http://dropbox.ashlock.us/open311/json-xml/
-object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
+object DefaultXmlFormatPlugin extends AbstractDataFormatPlugin {
   private val XMLNS_KEY = "xmlns"
   val DEFAULT_NS_KEY = "$"
   private val DEFAULT_DS_NS_SEPARATOR = ":"
@@ -96,10 +97,10 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
     val effectiveParams = EffectiveParams(doc.getMediaType)
 
     doc.getContent.getClass match {
-      case cls if classOf[String].isAssignableFrom(cls) => XML.loadString(doc.getContent.asInstanceOf[String], effectiveParams)
-      case cls if classOf[URL].isAssignableFrom(cls) => XML.load(doc.getContent.asInstanceOf[URL], effectiveParams)
-      case cls if classOf[File].isAssignableFrom(cls) => XML.loadFile(doc.getContent.asInstanceOf[File], effectiveParams)
-      case cls if classOf[InputStream].isAssignableFrom(cls) => XML.load(doc.getContent.asInstanceOf[InputStream], effectiveParams)
+      case cls if classOf[String].isAssignableFrom(cls) => Xml.loadString(doc.getContent.asInstanceOf[String], effectiveParams)
+      case cls if classOf[URL].isAssignableFrom(cls) => Xml.load(doc.getContent.asInstanceOf[URL], effectiveParams)
+      case cls if classOf[File].isAssignableFrom(cls) => Xml.loadFile(doc.getContent.asInstanceOf[File], effectiveParams)
+      case cls if classOf[InputStream].isAssignableFrom(cls) => Xml.load(doc.getContent.asInstanceOf[InputStream], effectiveParams)
       case _ => throw new PluginException(new IllegalArgumentException("Unsupported document content class, use the test method canRead before invoking read"))
     }
   }
@@ -128,14 +129,14 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
 
     if (targetType.isAssignableFrom(classOf[String])) {
       val writer = new StringWriter()
-      XML.writeXML(writer, inputAsObj.head.asInstanceOf[(String, ujson.Obj)], effectiveParams)
+      Xml.writeXml(writer, inputAsObj.head.asInstanceOf[(String, ujson.Obj)], effectiveParams)
 
       new DefaultDocument(writer.toString, MediaTypes.APPLICATION_XML).asInstanceOf[document.Document[T]]
     }
 
     else if (targetType.isAssignableFrom(classOf[OutputStream])) {
       val out = new BufferedOutputStream(new ByteArrayOutputStream)
-      XML.writeXML(new OutputStreamWriter(out, charset), inputAsObj.head.asInstanceOf[(String, ujson.Obj)], effectiveParams)
+      Xml.writeXml(new OutputStreamWriter(out, charset), inputAsObj.head.asInstanceOf[(String, ujson.Obj)], effectiveParams)
 
       new DefaultDocument(out, MediaTypes.APPLICATION_XML).asInstanceOf[document.Document[T]]
     }

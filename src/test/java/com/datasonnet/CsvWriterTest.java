@@ -28,7 +28,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CSVWriterTest {
+public class CsvWriterTest {
 
     @Test
     void testCSVWriter() throws URISyntaxException, IOException {

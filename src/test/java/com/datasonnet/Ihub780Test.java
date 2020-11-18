@@ -29,7 +29,7 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class IHUB780Test {
+public class Ihub780Test {
 
     @Test
     void testCSV() throws IOException, URISyntaxException {

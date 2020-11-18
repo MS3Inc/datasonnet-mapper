@@ -16,7 +16,7 @@ package com.datasonnet.plugins.xml
  * limitations under the License.
  */
 
-import com.datasonnet.plugins.DefaultXMLFormatPlugin.{BadgerFishMode, DEFAULT_NS_KEY, EffectiveParams}
+import com.datasonnet.plugins.DefaultXmlFormatPlugin.{BadgerFishMode, DEFAULT_NS_KEY, EffectiveParams}
 import org.xml.sax.ext.DefaultHandler2
 import org.xml.sax.{Attributes, SAXParseException}
 

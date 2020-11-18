@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class XMLWriterTest {
+public class XmlWriterTest {
 
     @Test
     void testOverrideNamespaces() throws Exception {

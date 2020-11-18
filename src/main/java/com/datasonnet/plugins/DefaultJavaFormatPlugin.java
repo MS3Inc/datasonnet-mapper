@@ -21,10 +21,10 @@ import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
-import com.datasonnet.plugins.jackson.JAXBElementMixIn;
-import com.datasonnet.plugins.jackson.JAXBElementSerializer;
+import com.datasonnet.plugins.jackson.JaxbElementMixIn;
+import com.datasonnet.plugins.jackson.JaxbElementSerializer;
 import com.datasonnet.spi.PluginException;
-import com.datasonnet.spi.ujsonUtils;
+import com.datasonnet.spi.UJsonUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,9 +52,9 @@ public class DefaultJavaFormatPlugin extends BaseJacksonDataFormatPlugin {
 
     static {
         SimpleModule module = new SimpleModule();
-        module.addSerializer(JAXBElement.class, new JAXBElementSerializer());
+        module.addSerializer(JAXBElement.class, new JaxbElementSerializer());
         DEFAULT_OBJECT_MAPPER.registerModule(module);
-        DEFAULT_OBJECT_MAPPER.addMixIn(JAXBElement.class, JAXBElementMixIn.class);
+        DEFAULT_OBJECT_MAPPER.addMixIn(JAXBElement.class, JaxbElementMixIn.class);
         // TODO: 9/8/20 add test for empty beans
         DEFAULT_OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         DEFAULT_OBJECT_MAPPER.setDateFormat(makeDateFormat(DEFAULT_DS_DATE_FORMAT));
@@ -98,19 +98,19 @@ public class DefaultJavaFormatPlugin extends BaseJacksonDataFormatPlugin {
         return ujsonFrom(inputAsNode);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> Document<T> write(Value input, MediaType mediaType, Class<T> targetType) throws PluginException {
         T converted = writeValue(input, mediaType, targetType);
         return new DefaultDocument<>(converted);
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     private <T> T writeValue(Value input, MediaType mediaType, Class<T> targetType) throws PluginException {
         ObjectMapper mapper = getObjectMapper(mediaType);
 
         try {
-            Object inputAsJava = ujsonUtils.javaObjectFrom(input);
+            Object inputAsJava = UJsonUtils.javaObjectFrom(input);
             if(mediaType.getParameters().containsKey(DS_PARAM_TYPE) || mediaType.getParameters().containsKey(DS_PARAM_OUTPUT_CLASS)) {
                 String typeName = getJavaType(mediaType);
                 if (!"".equals(typeName)) {  // make it possible to opt out with a media type that blanks the param
@@ -118,7 +118,7 @@ public class DefaultJavaFormatPlugin extends BaseJacksonDataFormatPlugin {
                     // provide a requested subtype, if it's compatible with the type requested
                     if (javaType.isTypeOrSubTypeOf(targetType)) {
                         // we already have something that works
-                        if(javaType.isTypeOrSuperTypeOf(inputAsJava.getClass())) {
+                        if (javaType.isTypeOrSuperTypeOf(inputAsJava.getClass())) {
                             return (T) inputAsJava;
                         } else {
                             return mapper.convertValue(inputAsJava, javaType);
@@ -128,7 +128,7 @@ public class DefaultJavaFormatPlugin extends BaseJacksonDataFormatPlugin {
             }
 
             // fancier version of the Object.equals optimization
-            if(targetType.isAssignableFrom(inputAsJava.getClass())) {
+            if (targetType.isAssignableFrom(inputAsJava.getClass())) {
                 return (T) inputAsJava;
             } else {
                 return mapper.convertValue(inputAsJava, targetType);

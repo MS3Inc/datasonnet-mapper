@@ -25,10 +25,10 @@ import java.time.{Duration, Period, ZoneId, ZonedDateTime}
 import java.util.function.Function
 import java.util.{Base64, Scanner}
 
-import com.datasonnet
 import com.datasonnet.document.{DefaultDocument, MediaType}
 import com.datasonnet.header.Header
-import com.datasonnet.spi.{DataFormatService, Library, ujsonUtils}
+import com.datasonnet.modules.{Crypto, JsonPath, Regex}
+import com.datasonnet.spi.{DataFormatService, Library, UJsonUtils}
 import sjsonnet.Expr.Member.Visibility
 import sjsonnet.ReadWriter.{ApplyerRead, ArrRead, StringRead}
 import sjsonnet.Std.{builtin, builtinWithDefaults, _}
@@ -38,7 +38,7 @@ import ujson.Value
 import scala.collection.mutable
 import scala.util.Random
 
-object DS extends Library {
+object Ds extends Library {
 
   override def namespace() = "ds"
 
@@ -381,7 +381,7 @@ object DS extends Library {
       val data = args("data").cast[Val.Str].value
       val mimeType = args("mimeType").cast[Val.Str].value
       val params = if (args("params") == Val.Null) {
-        Library.emptyObj
+        Library.EmptyObj
       } else {
         args("params").cast[Val.Obj]
       }
@@ -401,10 +401,10 @@ object DS extends Library {
               catch {
                 case _: NullPointerException => "null"
               }
-            Materializer.reverse(ujsonUtils.parse(out));
+            Materializer.reverse(UJsonUtils.parse(out));
           case _ =>
             val out = new Scanner(new URL(url).openStream(), "UTF-8").useDelimiter("\\A").next()
-            Materializer.reverse(ujsonUtils.parse(out));
+            Materializer.reverse(UJsonUtils.parse(out));
         }
     },
 
@@ -524,7 +524,7 @@ object DS extends Library {
       val data = args("data")
       val mimeType = args("mimeType").cast[Val.Str].value
       val params = if (args("params") == Val.Null) {
-        Library.emptyObj
+        Library.EmptyObj
       } else {
         args("params").cast[Val.Obj]
       }
@@ -1025,7 +1025,7 @@ object DS extends Library {
 
       builtin("hmac", "value", "secret", "algorithm") {
         (_, _, value: String, secret: String, algorithm: String) =>
-          datasonnet.Crypto.hmac(value, secret, algorithm)
+          Crypto.hmac(value, secret, algorithm)
       }
     ),
 
@@ -2191,10 +2191,10 @@ object DS extends Library {
 
   private def read(dataFormats: DataFormatService, data: String, mimeType: String, params: Val.Obj, ev: EvalScope): Val = {
     val Array(supert, subt) = mimeType.split("/", 2)
-    val paramsAsJava = ujsonUtils.javaObjectFrom(ujson.read(Materializer.apply(params)(ev)).obj).asInstanceOf[java.util.Map[String, String]]
+    val paramsAsJava = UJsonUtils.javaObjectFrom(ujson.read(Materializer.apply(params)(ev)).obj).asInstanceOf[java.util.Map[String, String]]
     val doc = new DefaultDocument(data, new MediaType(supert, subt, paramsAsJava))
 
-    val plugin = dataFormats.thatAccepts(doc)
+    val plugin = dataFormats.thatCanRead(doc)
       .orElseThrow(() => Error.Delegate("No suitable plugin found for mime type: " + mimeType))
 
     Materializer.reverse(plugin.read(doc))
@@ -2202,10 +2202,10 @@ object DS extends Library {
 
   private def write(dataFormats: DataFormatService, json: Val, mimeType: String, params: Val.Obj, ev: EvalScope): String = {
     val Array(supert, subt) = mimeType.split("/", 2)
-    val paramsAsJava = ujsonUtils.javaObjectFrom(ujson.read(Materializer.apply(params)(ev)).obj).asInstanceOf[java.util.Map[String, String]]
+    val paramsAsJava = UJsonUtils.javaObjectFrom(ujson.read(Materializer.apply(params)(ev)).obj).asInstanceOf[java.util.Map[String, String]]
     val mediaType = new MediaType(supert, subt, paramsAsJava)
 
-    val plugin = dataFormats.thatProduces(mediaType, classOf[String])
+    val plugin = dataFormats.thatCanWrite(mediaType, classOf[String])
       .orElseThrow(() => Error.Delegate("No suitable plugin found for mime type: " + mimeType))
 
     plugin.write(Materializer.apply(json)(ev), mediaType, classOf[String]).getContent

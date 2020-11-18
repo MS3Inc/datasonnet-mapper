@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
-public class XMLReaderTest {
+public class XmlReaderTest {
 
     @Test
     void testNonAscii() throws Exception {

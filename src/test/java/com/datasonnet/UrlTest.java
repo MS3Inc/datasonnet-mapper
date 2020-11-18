@@ -24,7 +24,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class URLTest {
+public class UrlTest {
 
     @Test
     void testEncodeDecode() throws Exception {

@@ -21,7 +21,7 @@ import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
 import com.datasonnet.spi.PluginException;
-import com.datasonnet.spi.ujsonUtils;
+import com.datasonnet.spi.UJsonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +30,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import ujson.Value;
 
-import javax.swing.text.html.Option;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
+public class DefaultCsvFormatPlugin extends BaseJacksonDataFormatPlugin {
     public static final String DS_PARAM_USE_HEADER = "useheader";
     public static final String DS_PARAM_QUOTE_CHAR = "quote";
     public static final String DS_PARAM_SEPARATOR_CHAR = "separator";
@@ -56,7 +55,7 @@ public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
         CSV_MAPPER.enable(CsvParser.Feature.WRAP_AS_ARRAY);
     }
 
-    public DefaultCSVFormatPlugin() {
+    public DefaultCsvFormatPlugin() {
         supportedTypes.add(MediaTypes.APPLICATION_CSV);
 
         readerParams.add(DS_PARAM_USE_HEADER);
@@ -135,7 +134,7 @@ public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
         CsvSchema.Builder builder = this.getBuilder(mediaType);
 
         try {
-            final JsonNode jsonTree = OBJECT_MAPPER.valueToTree(ujsonUtils.javaObjectFrom(input));
+            final JsonNode jsonTree = OBJECT_MAPPER.valueToTree(UJsonUtils.javaObjectFrom(input));
             if (isUseHeader(mediaType)) {
                 if (params.containsKey(DS_PARAM_HEADERS)) {
                     String[] headers = params.get(DS_PARAM_HEADERS).split(",");

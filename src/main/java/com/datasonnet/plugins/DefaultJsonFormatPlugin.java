@@ -22,7 +22,7 @@ import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
 import com.datasonnet.spi.AbstractDataFormatPlugin;
 import com.datasonnet.spi.PluginException;
-import com.datasonnet.spi.ujsonUtils;
+import com.datasonnet.spi.UJsonUtils;
 import ujson.Value;
 
 import java.io.BufferedOutputStream;
@@ -34,8 +34,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
-public class DefaultJSONFormatPlugin extends AbstractDataFormatPlugin {
-    public DefaultJSONFormatPlugin() {
+public class DefaultJsonFormatPlugin extends AbstractDataFormatPlugin {
+    public DefaultJsonFormatPlugin() {
         supportedTypes.add(MediaTypes.APPLICATION_JSON);
         supportedTypes.add(new MediaType("application", "*+json"));
 
@@ -64,27 +64,27 @@ public class DefaultJSONFormatPlugin extends AbstractDataFormatPlugin {
         Class<?> targetType = doc.getContent().getClass();
 
         if (String.class.isAssignableFrom(targetType)) {
-            return ujsonUtils.read(ujson.Readable.fromString((String) doc.getContent()), false);
+            return UJsonUtils.read(ujson.Readable.fromString((String) doc.getContent()), false);
         }
 
         if (CharSequence.class.isAssignableFrom(targetType)) {
-            return ujsonUtils.read(ujson.Readable.fromCharSequence((CharSequence) doc.getContent()), false);
+            return UJsonUtils.read(ujson.Readable.fromCharSequence((CharSequence) doc.getContent()), false);
         }
 
         if (Path.class.isAssignableFrom(targetType)) {
-            return ujsonUtils.read((ujson.Readable) ujson.Readable.fromPath((Path) doc.getContent()), false);
+            return UJsonUtils.read((ujson.Readable) ujson.Readable.fromPath((Path) doc.getContent()), false);
         }
 
         if (File.class.isAssignableFrom(targetType)) {
-            return ujsonUtils.read((ujson.Readable) ujson.Readable.fromFile((File) doc.getContent()), false);
+            return UJsonUtils.read((ujson.Readable) ujson.Readable.fromFile((File) doc.getContent()), false);
         }
 
         if (ByteBuffer.class.isAssignableFrom(targetType)) {
-            return ujsonUtils.read(ujson.Readable.fromByteBuffer((ByteBuffer) doc.getContent()), false);
+            return UJsonUtils.read(ujson.Readable.fromByteBuffer((ByteBuffer) doc.getContent()), false);
         }
 
         if (byte[].class.isAssignableFrom(targetType)) {
-            return ujsonUtils.read(ujson.Readable.fromByteArray((byte[]) doc.getContent()), false);
+            return UJsonUtils.read(ujson.Readable.fromByteArray((byte[]) doc.getContent()), false);
         }
 
         throw new PluginException(new IllegalArgumentException("Unsupported document content class, use the test method canRead before invoking read"));
@@ -101,24 +101,24 @@ public class DefaultJSONFormatPlugin extends AbstractDataFormatPlugin {
         int indent = mediaType.getParameters().containsKey(DS_PARAM_INDENT) ? 4 : -1;
 
         if (targetType.isAssignableFrom(String.class)) {
-            return new DefaultDocument<>((T) ujsonUtils.write(input, indent, false), MediaTypes.APPLICATION_JSON);
+            return new DefaultDocument<>((T) UJsonUtils.write(input, indent, false), MediaTypes.APPLICATION_JSON);
         }
 
         if (targetType.isAssignableFrom(CharSequence.class)) {
-            return new DefaultDocument<>((T) ujsonUtils.write(input, indent, false), MediaTypes.APPLICATION_JSON);
+            return new DefaultDocument<>((T) UJsonUtils.write(input, indent, false), MediaTypes.APPLICATION_JSON);
         }
 
         if (targetType.isAssignableFrom(ByteBuffer.class)) {
-            return new DefaultDocument<>((T) ByteBuffer.wrap(ujsonUtils.write(input, indent, false).getBytes(charset)), MediaTypes.APPLICATION_JSON);
+            return new DefaultDocument<>((T) ByteBuffer.wrap(UJsonUtils.write(input, indent, false).getBytes(charset)), MediaTypes.APPLICATION_JSON);
         }
 
         if (targetType.isAssignableFrom(byte[].class)) {
-            return new DefaultDocument<>((T) ujsonUtils.write(input, indent, false).getBytes(charset), MediaTypes.APPLICATION_JSON);
+            return new DefaultDocument<>((T) UJsonUtils.write(input, indent, false).getBytes(charset), MediaTypes.APPLICATION_JSON);
         }
 
         if (targetType.isAssignableFrom(OutputStream.class)) {
             BufferedOutputStream out = new BufferedOutputStream(new ByteArrayOutputStream());
-            ujsonUtils.writeTo(input, new OutputStreamWriter(out, charset), indent, false);
+            UJsonUtils.writeTo(input, new OutputStreamWriter(out, charset), indent, false);
 
             return new DefaultDocument<>((T) out, MediaTypes.APPLICATION_JSON);
         }
