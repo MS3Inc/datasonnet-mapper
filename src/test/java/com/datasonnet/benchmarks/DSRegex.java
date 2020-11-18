@@ -21,14 +21,13 @@ import com.datasonnet.MapperBuilder;
 import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaTypes;
-import com.datasonnet.plugins.DefaultJSONFormatPlugin;
+import com.datasonnet.plugins.DefaultJsonFormatPlugin;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO
 public class DSRegex {
 
     @Benchmark
@@ -47,7 +46,7 @@ public class DSRegex {
         @Setup(Level.Trial)
         public void setup() throws Exception {
             mapper = new MapperBuilder(regexScripts.get(scriptName))
-                    .configurePlugins(list -> list.add(new DefaultJSONFormatPlugin()))
+                    .configurePlugins(list -> list.add(new DefaultJsonFormatPlugin()))
                     .build();
             payload = new DefaultDocument<>(null, MediaTypes.APPLICATION_JSON);
         }

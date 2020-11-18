@@ -21,7 +21,7 @@ import com.datasonnet.MapperBuilder;
 import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaTypes;
-import com.datasonnet.plugins.DefaultJSONFormatPlugin;
+import com.datasonnet.plugins.DefaultJsonFormatPlugin;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.Map;
@@ -82,7 +82,7 @@ public class DSCore {
         @Setup(Level.Trial)
         public void setup() throws Exception {
             mapper = new MapperBuilder(coreScripts.get(scriptName))
-                    .configurePlugins(list -> list.add(new DefaultJSONFormatPlugin()))
+                    .configurePlugins(list -> list.add(new DefaultJsonFormatPlugin()))
                     .build();
             payload = new DefaultDocument<>(null, MediaTypes.APPLICATION_JSON);
         }
