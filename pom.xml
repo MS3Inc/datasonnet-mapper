@@ -88,6 +88,7 @@
         <quickcheck.version>0.9.4</quickcheck.version>
         <xmlunit.version>2.7.0</xmlunit.version>
         <mycila.version>4.0.rc2</mycila.version>
+        <jmh.version>1.23</jmh.version>
     </properties>
 
     <dependencies>
