@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -49,7 +50,6 @@ public class JavaWriterTest {
 
         Mapper mapper = new Mapper(mapping);
 
-
         Document<Gizmo> mapped = mapper.transform(data, new HashMap<>(), MediaTypes.APPLICATION_JAVA, Gizmo.class);
 
         Object result = mapped.getContent();
@@ -64,24 +64,26 @@ public class JavaWriterTest {
         assertEquals("ACME123", gizmo.getManufacturer().getManufacturerCode());
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        // what's going on here is, a java Date is a moment in time, and when not provided with locale info
+        // -- such as if it is just a play yyyy-MM-dd -- it uses the locale of the local time zone, which is bad.
+        // The best way to solve this would be using a more appropriate class, specifically a LocalDate,
+        // but absent that it's necessary to make sure that the time zone things go in in is the time zone they
+        // come out. We've forced UTC internally, here, pending a more complete datetime overhaul.
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
         assertEquals("2020-01-06", df.format(gizmo.getDate()));
 
         //Test with default output, i.e. java.util.HashMap
         mapping = mapping.substring(mapping.lastIndexOf("*/") + 2);
 
         mapper = new Mapper(mapping);
-
-
         Document<Map> mappedMap = mapper.transform(data, new HashMap<>(), MediaTypes.APPLICATION_JAVA, Map.class);
 
         result = mappedMap.getContent();
-        assertTrue(result instanceof java.util.HashMap);
+        assertTrue(result instanceof java.util.Map);
 
         Map gizmoMap = (Map) result;
-        assertTrue(gizmoMap.get("colors") instanceof java.util.ArrayList);
-        assertTrue(gizmoMap.get("manufacturer") instanceof java.util.HashMap);
-
-
+        assertTrue(gizmoMap.get("colors") instanceof java.util.List);
+        assertTrue(gizmoMap.get("manufacturer") instanceof java.util.Map);
     }
 
     @Test
@@ -93,7 +95,6 @@ public class JavaWriterTest {
         String mapping = TestResourceReader.readFileAsString("writeJavaFunctionTest.ds");
         Mapper mapper = new Mapper(mapping);
 
-
         try {
             mapper.transform(data, new HashMap<>(), MediaTypes.APPLICATION_JAVA);
             fail("Should not succeed");
@@ -101,6 +102,21 @@ public class JavaWriterTest {
             // this error is now thrown by jackson as it _will_ try to write a String...
             assertTrue(e.getMessage().contains("Unable to convert to target type"), "Failed with wrong message: " + e.getMessage());
         }
+    }
+
+    @Test
+    void testIncompatibleRequestedType() throws Exception {
+        Document<String> data = new DefaultDocument<>("{}", MediaTypes.APPLICATION_JSON);
+        Mapper mapper = new Mapper("/** DataSonnet\n" +
+                "version=2.0\n" +
+                "output application/java; OutputClass=java.lang.Object\n" +
+                "*/\n" +
+                "{ a: 5 }");
+        Document<Map> mapped = mapper.transform(data, new HashMap<>(), MediaTypes.APPLICATION_JAVA, Map.class);
+        assertTrue(mapped.getContent() instanceof Map);
+
+        Document<Object> remapped = mapper.transform(data, new HashMap<>(), MediaTypes.APPLICATION_JAVA, Object.class);
+        assertTrue(remapped.getContent() instanceof Map); // yep, still should be, because that's what we auto-convert to!
     }
 
     @Test
@@ -113,17 +129,25 @@ public class JavaWriterTest {
         Object result = mapped.getContent();
         assertTrue(result instanceof WsdlGeneratedObj);
 
-        JAXBContext jaxbContext = JAXBContext.newInstance(WsdlGeneratedObj.class);
+        Document<Object> objectMapped = mapper.transform(data, new HashMap<>(), MediaTypes.APPLICATION_JAVA, Object.class);
+        Object objectResult = objectMapped.getContent();
+        assertTrue(objectResult instanceof WsdlGeneratedObj);
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(WsdlGeneratedObj.class );
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-        StringWriter sw = new StringWriter();
-        jaxbMarshaller.marshal(result, sw);
+        StringWriter writer = new StringWriter();
+        jaxbMarshaller.marshal(result, writer);
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<WsdlGeneratedObj xmlns:ns2=\"http://com.datasonnet.test\">\n" +
                 "    <ns2:testField>\n" +
                 "        <test>Hello World</test>\n" +
                 "    </ns2:testField>\n" +
-                "</WsdlGeneratedObj>\n", sw.toString());
+                "</WsdlGeneratedObj>\n", writer.toString());
+
+        StringWriter objectWriter = new StringWriter();
+        jaxbMarshaller.marshal(objectResult, objectWriter);
+        assertEquals(writer.toString(), objectWriter.toString());
     }
 }

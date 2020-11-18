@@ -18,10 +18,13 @@ package com.datasonnet.plugins.xml
 
 import java.io.{StringWriter, Writer}
 
-import com.datasonnet.plugins.DefaultXMLFormatPlugin.EffectiveParams
+import com.datasonnet.plugins.DefaultXmlFormatPlugin.EffectiveParams
+import org.xml.sax.helpers.NamespaceSupport
+import ujson.Obj
 
 // See {@link scala.xml.Utility.serialize}
-object BadgerFishWriter {
+class BadgerFishWriter(val params: EffectiveParams) {
+
   // TODO: write docs and notice and coverage
   // taken from scala.xml.Utility
   object Escapes {
@@ -42,18 +45,38 @@ object BadgerFishWriter {
 
   import Escapes.escMap
 
-  def serialize(root: (String, ujson.Obj), sb: Writer = new StringWriter(),
-                params: EffectiveParams): Writer = {
+
+  val namespaces: NamespaceSupport = new OverridingNamespaceTranslator(params.declarations)
+  val namespaceParts = new Array[String](3)  // keep reusing a single array
+
+  def serialize(root: (String, ujson.Obj), sb: Writer = new StringWriter()): Writer = {
+
+    // initialize namespaces for use in later writing
+    // we have to do this because even the first thing we write,
+    // the element name, might have an overridden namespace
+    namespaces.pushContext()
+    if (root._2.value.contains(params.xmlnsKey)) {
+      root._2.value(params.xmlnsKey).obj.foreach {
+        case (key, value) =>
+          namespaces.declarePrefix(if (key == "$") "" else key, value.str)
+      }
+    }
+
     sb.append('<')
-    sb.append(root._1.replace(params.nsSeparator, ":"))
+    val qname = processName(root._1, false)
+    val element = qname.replace(params.nsSeparator, ":")
+    sb.append(element)
 
     val (attrs, children) = root._2.value.partition(entry => entry._1.startsWith(params.attrKeyPrefix) && !entry._1.equals(params.xmlnsKey))
 
     attrs.foreach {
       attr =>
+        val qname = attr._1.substring(params.attrKeyPrefix.size)
+        val translated = namespaces.processName(qname, namespaceParts, true)(2)
         sb append ' '
-        sb append attr._1.substring(1)
+        sb append translated
         sb append '='
+        // TODO this is likely improperly escaped, but verify with a test
         appendQuoted(attr._2.str, sb)
     }
 
@@ -61,8 +84,14 @@ object BadgerFishWriter {
       root._2.value(params.xmlnsKey).obj.foreach {
         case (key, value) =>
           sb append " xmlns%s=\"%s\"".format(
-            if (key != null && !key.equals("$")) ":" + key else "",
-            if (value.str != null) value.str else ""
+            if (key != null) {
+              val newPrefix = namespaces.getPrefix(value.str)
+              // this is the way to check for the root namespace prescribed by the docs
+              if(newPrefix == null && namespaces.getURI("") == value.str) "" else ":" + newPrefix
+            } else {
+              ""  // make clear there's a problem. We should probably throw an exception instead.
+            },
+            if (value.str != null) value.str else ""  // again should likely exception
           )
       }
     }
@@ -75,28 +104,51 @@ object BadgerFishWriter {
 
       children.foreach {
         child =>
-          if (child._1.equals(params.xmlnsKey)) {
+          val (key, value) = child
+          if (key.equals(params.xmlnsKey)) {
             // no op
-          } else if (child._1.startsWith(params.textKeyPrefix)) {
-            escapeText(child._2.str, sb)
-          } else if (child._1.startsWith(params.cdataKeyPrefix)) {
+          } else if (key.startsWith(params.textKeyPrefix)) {
+            if (key == params.textKeyPrefix) {
+              // if we encounter a bare $, it either represents all the text, so it should be written,
+              // or there are _also_ $1 or #1 (and maybe more) elements with the contents, and then only those should
+              // be written.
+              if (!children.contains(params.textKeyPrefix + "1") && !children.contains(params.cdataKeyPrefix + "1")) {
+                escapeText(value.str, sb)
+              }
+            } else {
+              // not a bare $, always output it
+              escapeText(value.str, sb)
+            }
+          } else if (key.startsWith(params.cdataKeyPrefix)) {
             // taken from scala.xml.PCData
-            sb append "<![CDATA[%s]]>".format(child._2.str.replaceAll("]]>", "]]]]><![CDATA[>"))
-          } else child._2 match {
-            case obj: ujson.Obj => serialize((child._1, obj), sb, params)
-            case ujson.Arr(arr) => arr.foreach(arrItm => serialize((child._1, arrItm.obj), sb, params))
-            case ujson.Null => if (params.nullAsEmpty) serialize((child._1, ujson.Obj((params.textKeyPrefix, ""))), sb, params)
-            case num: ujson.Num => serialize((child._1, ujson.Obj((params.textKeyPrefix, String.valueOf(num)))), sb, params)
-            case any: ujson.Value => serialize((child._1, ujson.Obj((params.textKeyPrefix, String.valueOf(any.value)))), sb, params)
+            sb append "<![CDATA[%s]]>".format(value.str.replaceAll("]]>", "]]]]><![CDATA[>"))
+          } else value match {
+            case obj: ujson.Obj => serialize((key, obj), sb)
+            case ujson.Arr(arr) => arr.foreach(arrItm => serialize((key, arrItm.obj), sb))
+            case ujson.Null => if (params.nullAsEmpty) serialize((key, ujson.Obj((params.textKeyPrefix, ""))), sb)
+            case num: ujson.Num => serialize((key, ujson.Obj((params.textKeyPrefix, String.valueOf(num)))), sb)
+            case any: ujson.Value => serialize((key, ujson.Obj((params.textKeyPrefix, String.valueOf(any.value)))), sb)
           }
       }
 
       sb.append("</")
-      sb.append(root._1.replace(params.nsSeparator, ":"))
+      sb.append(element)
       sb.append('>')
     }
 
+    namespaces.popContext()
     sb
+  }
+
+  private def processName(qname: String, isAttribute: Boolean) = {
+    val processed = namespaces.processName(qname, namespaceParts, isAttribute)
+    if (processed == null) {
+      // some namespace problem. This should likely throw an exception, but for now return the original
+      qname
+    } else {
+      // success
+      processed(2)
+    }
   }
 
   def appendQuoted(s: String, sb: Writer): Writer = {

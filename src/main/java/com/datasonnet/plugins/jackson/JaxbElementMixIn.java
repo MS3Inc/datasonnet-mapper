@@ -24,9 +24,9 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 @JsonIgnoreProperties(value = {"globalScope", "typeSubstituted", "nil", "scope"})
-public abstract class JAXBElementMixIn<T> extends JAXBElement<T> {
+public abstract class JaxbElementMixIn<T> extends JAXBElement<T> {
     @JsonCreator
-    public JAXBElementMixIn(@JsonProperty("name") QName name,
+    public JaxbElementMixIn(@JsonProperty("name") QName name,
                             @JsonProperty("declaredType") Class<T> declaredType,
                             @JsonProperty("value") T value) {
         super(name, declaredType, value);

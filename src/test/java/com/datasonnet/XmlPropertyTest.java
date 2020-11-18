@@ -20,8 +20,8 @@ package com.datasonnet;
 import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.MediaTypes;
 import com.datasonnet.util.Dictionary;
-import com.datasonnet.util.XMLDocumentUtils;
-import com.datasonnet.util.XMLGenerator;
+import com.datasonnet.util.XmlDocumentUtils;
+import com.datasonnet.util.XmlGenerator;
 import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;
 import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
@@ -40,12 +40,12 @@ import static org.junit.Assert.assertTrue;
 
 @Ignore
 @RunWith(JUnitQuickcheck.class)
-public class XMLPropertyTest {
+public class XmlPropertyTest {
 
 
     @Property
-    public void reversible(@From(XMLGenerator.class) @Dictionary("xml.dict") Document dom) throws Exception {
-        String xml = XMLDocumentUtils.documentToString(dom);
+    public void reversible(@From(XmlGenerator.class) @Dictionary("xml.dict") Document dom) throws Exception {
+        String xml = XmlDocumentUtils.documentToString(dom);
         Mapper mapper = new Mapper("ds.write(ds.read(payload, \"application/xml\"), \"application/xml\")");
         String output = mapper.transform(new DefaultDocument<String>(xml, MediaTypes.APPLICATION_XML), Collections.emptyMap(), MediaTypes.APPLICATION_XML).getContent();
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();

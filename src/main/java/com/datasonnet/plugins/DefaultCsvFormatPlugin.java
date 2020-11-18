@@ -20,9 +20,8 @@ import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
-import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.PluginException;
-import com.datasonnet.spi.ujsonUtils;
+import com.datasonnet.spi.UJsonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,13 +39,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
+public class DefaultCsvFormatPlugin extends BaseJacksonDataFormatPlugin {
     public static final String DS_PARAM_USE_HEADER = "useheader";
     public static final String DS_PARAM_QUOTE_CHAR = "quote";
     public static final String DS_PARAM_SEPARATOR_CHAR = "separator";
     public static final String DS_PARAM_ESCAPE_CHAR = "escape";
     public static final String DS_PARAM_NEW_LINE = "newline";
     public static final String DS_PARAM_HEADERS = "headers";
+    public static final String DS_PARAM_DISABLE_QUOTES = "disablequotes";
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final CsvMapper CSV_MAPPER = new CsvMapper();
@@ -55,7 +55,7 @@ public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
         CSV_MAPPER.enable(CsvParser.Feature.WRAP_AS_ARRAY);
     }
 
-    public DefaultCSVFormatPlugin() {
+    public DefaultCsvFormatPlugin() {
         supportedTypes.add(MediaTypes.APPLICATION_CSV);
 
         readerParams.add(DS_PARAM_USE_HEADER);
@@ -64,6 +64,7 @@ public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
         readerParams.add(DS_PARAM_ESCAPE_CHAR);
         readerParams.add(DS_PARAM_NEW_LINE);
         readerParams.add(DS_PARAM_HEADERS);
+        readerParams.add(DS_PARAM_DISABLE_QUOTES);
 
         writerParams.addAll(readerParams);
 
@@ -84,7 +85,7 @@ public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
     }
 
     @Override
-    public Value read(Document<?> doc, DataFormatService service) throws PluginException {
+    public Value read(Document<?> doc) throws PluginException {
         if (doc.getContent() == null) {
             return ujson.Null$.MODULE$;
         }
@@ -133,7 +134,7 @@ public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
         CsvSchema.Builder builder = this.getBuilder(mediaType);
 
         try {
-            final JsonNode jsonTree = OBJECT_MAPPER.valueToTree(ujsonUtils.javaObjectFrom(input));
+            final JsonNode jsonTree = OBJECT_MAPPER.valueToTree(UJsonUtils.javaObjectFrom(input));
             if (isUseHeader(mediaType)) {
                 if (params.containsKey(DS_PARAM_HEADERS)) {
                     String[] headers = params.get(DS_PARAM_HEADERS).split(",");
@@ -178,16 +179,24 @@ public class DefaultCSVFormatPlugin extends BaseJacksonDataFormatPlugin {
         boolean useHeader = Boolean.parseBoolean(Optional.ofNullable(useHeadrStr).orElse("true"));
         builder.setUseHeader(useHeader);
 
-        if (mediaType.getParameter(DS_PARAM_QUOTE_CHAR) != null) {
+        String disableQuotesStr = mediaType.getParameter(DS_PARAM_DISABLE_QUOTES);
+        boolean disableQuotes = Boolean.parseBoolean(Optional.ofNullable(disableQuotesStr).orElse("false"));
+
+        if(disableQuotes) {
+            builder.disableQuoteChar();
+        } else if (mediaType.getParameter(DS_PARAM_QUOTE_CHAR) != null) {
             builder.setQuoteChar(mediaType.getParameter(DS_PARAM_QUOTE_CHAR).charAt(0));
         }
+
         if (mediaType.getParameter(DS_PARAM_SEPARATOR_CHAR) != null) {
             builder.setColumnSeparator(mediaType.getParameter(DS_PARAM_SEPARATOR_CHAR).charAt(0));
         }
+
         if (mediaType.getParameter(DS_PARAM_ESCAPE_CHAR) != null) {
             builder.setEscapeChar(mediaType.getParameter(DS_PARAM_ESCAPE_CHAR).charAt(0)
             );
         }
+
         if (mediaType.getParameter(DS_PARAM_NEW_LINE) != null) {
             builder.setLineSeparator(mediaType.getParameter(DS_PARAM_NEW_LINE)
                     .replaceAll("LF", "\n")

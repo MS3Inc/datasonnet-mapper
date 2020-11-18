@@ -30,14 +30,14 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class XMLWriterTest {
+public class XmlWriterTest {
 
-    @Disabled
     @Test
     void testOverrideNamespaces() throws Exception {
         String json = "{\"b:a\":{\"@xmlns\":{\"b\":\"http://example.com/1\",\"b1\":\"http://example.com/2\"},\"b1:b\":{}}}";
@@ -61,7 +61,6 @@ public class XMLWriterTest {
         assertThat(mapped, containsString("xmlns=\"http://example.com/2\""));
     }
 
-    @Disabled
     @Test
     void testNamespaceBump() throws Exception {
         String json = "{\"b:a\":{\"@xmlns\":{\"b\":\"http://example.com/1\",\"b1\":\"http://example.com/2\"},\"b1:b\":{}}}";
@@ -94,14 +93,22 @@ public class XMLWriterTest {
 
         Mapper mapper = new Mapper(datasonnet);
 
+        String mappedXml = mapper.transform(new DefaultDocument<>(jsonData, MediaTypes.APPLICATION_JSON), Collections.emptyMap(), MediaTypes.APPLICATION_XML).getContent();
+
+        assertThat(mappedXml, CompareMatcher.isSimilarTo(expectedXml).ignoreWhitespace());
+    }
+
+    @Test
+    void testNoDoubleWrite() throws Exception {
+        String jsonData = TestResourceReader.readFileAsString("writeXMLExtDouble.json");
+        String datasonnet = TestResourceReader.readFileAsString("writeXMLExtTest.ds");
+        String expectedXml = TestResourceReader.readFileAsString("readXMLExtTest.xml");
+
+        Mapper mapper = new Mapper(datasonnet);
 
         String mappedXml = mapper.transform(new DefaultDocument<>(jsonData, MediaTypes.APPLICATION_JSON), Collections.emptyMap(), MediaTypes.APPLICATION_XML).getContent();
 
-        Map<String, String> namespaces = new HashMap<>();
-        namespaces.put("test", "http://www.modusbox.com");
-        namespaces.put("datasonnet", "http://www.modusbox.com");
-
-        assertThat(mappedXml, CompareMatcher.isSimilarTo(expectedXml).withNamespaceContext(namespaces).ignoreWhitespace());
+        assertThat(mappedXml, CompareMatcher.isSimilarTo(expectedXml).ignoreWhitespace());
     }
 
     @Test
@@ -122,7 +129,7 @@ public class XMLWriterTest {
 
     @Test
     void testNonAscii() throws Exception {
-        String jsonData = TestResourceReader.readFileAsString("xmlNonAscii.json");
+        String jsonData = TestResourceReader.readFileAsString("writerXmlNonAscii.json");
         String expectedXml = TestResourceReader.readFileAsString("xmlNonAscii.xml");
         String datasonnet = TestResourceReader.readFileAsString("xmlNonAscii.ds");
 
@@ -192,7 +199,7 @@ public class XMLWriterTest {
         String jsonData = TestResourceReader.readFileAsString("xmlEmptyElements.json");
 
         Mapper mapper = new Mapper("/** DataSonnet\n" +
-                "version=1.0\n" +
+                "version=2.0\n" +
                 "output application/xml;OmitXmlDeclaration=true\n" +
                 "*/\n" +
                 "payload");
@@ -202,7 +209,7 @@ public class XMLWriterTest {
         assertFalse(mappedXml.contains("<?xml"));
 
         mapper = new Mapper("/** DataSonnet\n" +
-                "version=1.0\n" +
+                "version=2.0\n" +
                 "output application/xml;OmitXmlDeclaration=false\n" +
                 "*/\n" +
                 "payload");
@@ -227,7 +234,7 @@ public class XMLWriterTest {
         }
 
         mapper = new Mapper("/** DataSonnet\n" +
-                "version=1.0\n" +
+                "version=2.0\n" +
                 "output application/xml; RootElement=TestRoot\n" +
                 "*/\n" +
                 "payload");

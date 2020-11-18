@@ -73,7 +73,7 @@ import java.io.IOException;
  * @author Rohan Padhye
  */
 // TODO: 9/23/20 state modifications
-public class XMLGenerator extends Generator<Document> {
+public class XmlGenerator extends Generator<Document> {
 
     private static final DocumentBuilderFactory documentBuilderFactory =
             DocumentBuilderFactory.newInstance();
@@ -107,7 +107,7 @@ public class XMLGenerator extends Generator<Document> {
 
     private Generator<String> stringGenerator = new AlphaStringGenerator();
 
-    public XMLGenerator() {
+    public XmlGenerator() {
         super(Document.class);
     }
 

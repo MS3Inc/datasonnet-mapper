@@ -30,7 +30,7 @@ public interface DataFormatPlugin {
         return false;
     }
 
-    ujson.Value read(Document<?> doc, DataFormatService service) throws PluginException;
+    Value read(Document<?> doc) throws PluginException;
 
     <T> Document<T> write(Value input, MediaType mediaType, Class<T> targetType) throws PluginException;
 }

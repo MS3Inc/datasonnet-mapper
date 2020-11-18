@@ -67,7 +67,7 @@ import java.io.StringWriter;
  * @author Rohan Padhye
  */
 // TODO: 9/23/20 state modifications
-public class XMLDocumentUtils {
+public class XmlDocumentUtils {
     private static final TransformerFactory transformerFactory =
             TransformerFactory.newInstance();
 

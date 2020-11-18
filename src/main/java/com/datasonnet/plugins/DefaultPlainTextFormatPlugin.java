@@ -21,9 +21,8 @@ import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
 import com.datasonnet.spi.AbstractDataFormatPlugin;
-import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.PluginException;
-import com.datasonnet.spi.ujsonUtils;
+import com.datasonnet.spi.UJsonUtils;
 import ujson.Value;
 
 public class DefaultPlainTextFormatPlugin extends AbstractDataFormatPlugin {
@@ -34,13 +33,13 @@ public class DefaultPlainTextFormatPlugin extends AbstractDataFormatPlugin {
         writerSupportedClasses.add(String.class);
     }
 
-    public Value read(Document<?> doc, DataFormatService service) throws PluginException {
+    public Value read(Document<?> doc) throws PluginException {
         if (doc.getContent() == null) {
             return ujson.Null$.MODULE$;
         }
 
         if (String.class.isAssignableFrom(doc.getContent().getClass())) {
-            return ujsonUtils.strOf((String) doc.getContent());
+            return UJsonUtils.strValueOf((String) doc.getContent());
         } else {
             throw new PluginException(new IllegalArgumentException("Unsupported document content class, use the test method canRead before invoking read"));
         }
@@ -50,7 +49,7 @@ public class DefaultPlainTextFormatPlugin extends AbstractDataFormatPlugin {
     @Override
     public <T> Document<T> write(Value input, MediaType mediaType, Class<T> targetType) throws PluginException {
         if (targetType.isAssignableFrom(String.class)) {
-            return (Document<T>) new DefaultDocument<>(ujsonUtils.stringValueOf(input), MediaTypes.TEXT_PLAIN);
+            return (Document<T>) new DefaultDocument<>(UJsonUtils.stringValueOf(input), MediaTypes.TEXT_PLAIN);
         } else {
             throw new IllegalArgumentException("Only strings can be written as plain text.");
         }

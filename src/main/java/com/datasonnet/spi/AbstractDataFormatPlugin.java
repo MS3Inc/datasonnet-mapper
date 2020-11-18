@@ -34,7 +34,7 @@ public abstract class AbstractDataFormatPlugin implements DataFormatPlugin {
     protected final Set<Class<?>> writerSupportedClasses = new LinkedHashSet<>(8);
 
     @Override
-    public Value read(Document<?> doc, DataFormatService service) throws PluginException {
+    public Value read(Document<?> doc) throws PluginException {
         throw new UnsupportedOperationException("not implemented!");
     }
 
@@ -54,7 +54,6 @@ public abstract class AbstractDataFormatPlugin implements DataFormatPlugin {
                 return true;
             }
         }
-
         return false;
     }
 

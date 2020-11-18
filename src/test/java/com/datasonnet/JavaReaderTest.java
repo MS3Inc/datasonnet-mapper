@@ -33,6 +33,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class JavaReaderTest {
 
     @Test
@@ -59,7 +61,7 @@ public class JavaReaderTest {
         String mapped = mapper.transform(data, new HashMap<>(), MediaTypes.APPLICATION_JSON).getContent();
 
         String expectedJson = TestResourceReader.readFileAsString("javaTest.json");
-        JSONAssert.assertEquals(expectedJson, mapped, false);
+        JSONAssert.assertEquals(expectedJson, mapped, true);
     }
 
     @Test
@@ -76,5 +78,13 @@ public class JavaReaderTest {
 
         String result = mapped.getContent();
         JSONAssert.assertEquals("{\"testField\":{\"name\":\"{http://com.datasonnet.test}testField\",\"declaredType\":\"com.datasonnet.javatest.TestField\",\"value\":{\"test\":\"HelloWorld\"}}}", result, true);
+    }
+
+    @Test
+    void testNullJavaObject() throws Exception {
+        Document<Gizmo> nullObj = new DefaultDocument<>(null);
+        Mapper mapper = new Mapper("payload == null");
+        Document<Boolean> mapped = mapper.transform(nullObj, new HashMap<>(), MediaTypes.APPLICATION_JAVA, Boolean.class);
+        assertTrue(mapped.getContent());
     }
 }

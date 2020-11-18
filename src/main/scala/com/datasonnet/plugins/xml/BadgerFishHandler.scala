@@ -16,8 +16,7 @@ package com.datasonnet.plugins.xml
  * limitations under the License.
  */
 
-import com.datasonnet.plugins.DefaultXMLFormatPlugin
-import com.datasonnet.plugins.DefaultXMLFormatPlugin.EffectiveParams
+import com.datasonnet.plugins.DefaultXmlFormatPlugin.{BadgerFishMode, DEFAULT_NS_KEY, EffectiveParams}
 import org.xml.sax.ext.DefaultHandler2
 import org.xml.sax.{Attributes, SAXParseException}
 
@@ -32,43 +31,52 @@ class BadgerFishHandler(params: EffectiveParams) extends DefaultHandler2 {
   // ignore text until after first element starts
   var capture: Boolean = false
 
+  private var needNewContext = true
+  private val namespaceParts = new Array[String](3)  // keep reusing a single array
+  private val namespaces = new OverridingNamespaceTranslator(params.declarations)
+  private var currentNS: mutable.LinkedHashMap[String, ujson.Str] = mutable.LinkedHashMap()
+
   // root
   badgerStack.push(BadgerFish(ujson.Obj()))
+
+  override def startPrefixMapping(prefix: String, uri: String): Unit = {
+    if(needNewContext) {
+      namespaces.pushContext()
+      needNewContext = false
+      if(currentNS.nonEmpty) currentNS = currentNS.empty
+    }
+    namespaces.declarePrefix(prefix, uri)
+    val newPrefix = namespaces.getPrefix(uri)
+    currentNS.put(if (newPrefix == null) DEFAULT_NS_KEY else newPrefix, ujson.Str(uri))
+  }
 
   override def startElement(uri: String,
                             _localName: String,
                             qname: String,
                             attributes: Attributes): Unit = {
+    if (needNewContext) namespaces.pushContext()
+    needNewContext = true
+
     captureText()
     capture = true
 
     val current = ujson.Obj()
+    if (currentNS.nonEmpty) {
+      current.value.addOne((params.xmlnsKey, currentNS))
+      currentNS = currentNS.empty
+    }
 
     if (attributes.getLength > 0) {
       val attrs = mutable.ListBuffer[(String, ujson.Str)]()
-      val ns = mutable.LinkedHashMap[String, ujson.Str]()
 
       for (i <- 0 until attributes.getLength) {
         val qname = attributes getQName i
         val value = attributes getValue i
+        val translated = processName(qname, true)
 
-        val (pre, key) = splitName(qname)
-        if (pre == "xmlns") {
-          ns.put(key, ujson.Str(value))
-        } else if (pre == null && qname == "xmlns") {
-          ns.put(DefaultXMLFormatPlugin.DEFAULT_NS_KEY, ujson.Str(value))
-        } else {
-          attrs.addOne((params.attrKeyPrefix + qname, ujson.Str(value)))
-        }
+        attrs.addOne((params.attrKeyPrefix + translated, ujson.Str(value)))
       }
-
-      if (ns.nonEmpty) {
-        current.value.addOne((params.xmlnsKey, ns))
-      }
-
-      if (attrs.nonEmpty) {
-        current.value.addAll(attrs.toList)
-      }
+      current.value.addAll(attrs.toList)
     }
 
     badgerStack.push(BadgerFish(current))
@@ -92,11 +100,35 @@ class BadgerFishHandler(params: EffectiveParams) extends DefaultHandler2 {
     buffer.clear()
   }
 
+  def hasText(current: BadgerFish): Boolean = current.txtIdx != 1 || current.cdataIdx != 1  // been incremented
+
+  def concatAllText(current: BadgerFish): Unit = {
+    val sb = new StringBuilder()
+    for ((name, value) <- current.obj.value) {
+      if (name.startsWith(params.textKeyPrefix) || name.startsWith(params.cdataKeyPrefix)) {
+        sb.append(value.str)
+        current.obj.value.remove(name)
+      }
+    }
+
+    current.obj.value.addOne(params.textKeyPrefix, ujson.Str(sb.toString()))
+  }
+
   override def endElement(uri: String, _localName: String, qname: String): Unit = {
     captureText()
-    val newName = qname.replaceFirst(":", params.nsSeparator)
-    val current = badgerStack.pop()
+
+    val translated = processName(qname, false)
+    val newName = translated.replaceFirst(":", params.nsSeparator)
+    val current = badgerStack.pop
     val parent = badgerStack.top.obj.value
+
+    if (params.mode == BadgerFishMode.simple && hasText(current)) {
+      // TODO render XML elements of mixed content inline with this text?
+      // would help ease a use case of mixed content; carrying
+      // marked up content
+      concatAllText(current)
+    }
+
     if (parent.contains(newName)) {
       (parent(newName): @unchecked) match {
         // added @unchecked to suppress non-exhaustive match warning, we will only see Arrs or Objs
@@ -108,6 +140,14 @@ class BadgerFishHandler(params: EffectiveParams) extends DefaultHandler2 {
     }
 
     capture = badgerStack.size != 1 // root level
+    namespaces.popContext()
+  }
+
+  private def processName(qname: String, isAttribute: Boolean) = {
+    // while processName can return null here, it will only do so if the XML
+    // namespace processing is written incorrectly, so if you see this line in a stack trace,
+    // go verifying what namespace-related calls have been made
+    namespaces.processName(qname, namespaceParts, isAttribute)(2)
   }
 
   def captureText(): Unit = {
@@ -122,12 +162,6 @@ class BadgerFishHandler(params: EffectiveParams) extends DefaultHandler2 {
     }
 
     buffer.clear()
-  }
-
-  private def splitName(s: String) = {
-    val idx = s indexOf ':'
-    if (idx < 0) (null, s)
-    else (s take idx, s drop (idx + 1))
   }
 
   override def warning(ex: SAXParseException): Unit = {}
