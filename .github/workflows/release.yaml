@@ -21,10 +21,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Package and run benchmarks
-        run: |
-          mvn clean package -DskipTests exec:exec@benchmarks
-          echo -e "\"$(date +"%a %d %b %Y")\",\"Processes: $(ps aux | wc -l)\",\"RELEASE\"\n$(cat target/jmh-reports/jmh-benchmark-report.csv)\n\n$(cat BENCHMARKS.csv)" > BENCHMARKS.csv
       - name: setup git
         run: |
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
@@ -41,3 +37,45 @@ jobs:
         run: "./mvnw -V --no-transfer-progress --batch-mode --settings .settings.xml \
         -Darguments='--settings .settings.xml -Dlicense.skip=true -DskipTests -Dmaven.install.skip=true' \
         release:perform"
+  benchmarks:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Run benchmarks
+        id: benchmarks
+        run: |
+          HEADER=$(printf "%s\n" "$( top -n 1 -b | head -n 5 | tr '\n' '|')")
+          mvn clean package -DskipTests exec:exec@benchmarks
+          echo "::set-output name=resources::$HEADER"
+      - name: Behcnmarks Output
+        run: "cat target/jmh-reports/jmh-benchmark-report.csv"
+      - name: Get Version
+        id: version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "::set-output name=version::$VERSION"
+      - name: Build Markdown File
+        id: markdown
+        env:
+          FILE: "benchmarks/${{ steps.version.outputs.version }}"
+        run: |
+          mkdir -p benchmarks
+          HEADER="$(echo -e "${{ steps.benchmarks.outputs.resources }}" | tr '|' '\n\n' )"
+          printf "%s\n\n%s\n\n%s\n\n%s\n\n" "$(date +"%a %d %b %Y")" "${{ steps.version.outputs.version}}" "$HEADER" "$(cat target/jmh-reports/jmh-benchmark-report.csv | sed 's/\r$//' | awk '{ printf("%s%s%s", "|", $0,"|\n") } NR==1 {print "|--|--|--|--|--|--|--|--|" }' | tr -s ',' '|')" > "${FILE}.md"
+          echo "::set-output name=file::$FILE"
+      - name: Setup Git
+        run: |
+          git config --global user.email "<>"
+          git config --global user.name "GitHub Actions Bot"
+      - name: Commit benchmark results
+        run: |
+          git add ${{ steps.markdown.outputs.file }}.*
+          git commit -m "Github action: updated the benchmark files"
+          git push
