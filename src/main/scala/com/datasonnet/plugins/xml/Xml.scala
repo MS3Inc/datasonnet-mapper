@@ -19,7 +19,7 @@ package com.datasonnet.plugins.xml
 import java.io.{File, FileInputStream, InputStream, Reader, StringReader}
 import java.nio.charset.Charset
 
-import com.datasonnet.plugins.DefaultXMLFormatPlugin.EffectiveParams
+import com.datasonnet.plugins.DefaultXmlFormatPlugin.EffectiveParams
 import javax.xml.parsers.SAXParser
 import org.xml.sax.InputSource
 
@@ -34,17 +34,17 @@ object Source {
 }
 
 // See {@link scala.xml.XML}
-object XML extends XMLLoader {
+object Xml extends XmlLoader {
 
   /** Returns an XMLLoader whose load* methods will use the supplied SAXParser. */
-  def withSAXParser(p: SAXParser): XMLLoader =
-    new XMLLoader {
+  def withSaxParser(p: SAXParser): XmlLoader =
+    new XmlLoader {
       override val parser: SAXParser = p
     }
 
-  def writeXML(sb: java.io.Writer, root: (String, ujson.Obj), effParams: EffectiveParams): Unit = {
+  def writeXml(sb: java.io.Writer, root: (String, ujson.Obj), effParams: EffectiveParams): Unit = {
     // TODO: get charset from params
     if (!effParams.omitDeclaration) sb.append("<?xml version='" + effParams.version + "' encoding='" + Charset.defaultCharset().displayName() + "'?>")
-    BadgerFishWriter.serialize(root, sb, effParams).toString
+    new BadgerFishWriter(effParams).serialize(root, sb).toString
   }
 }

@@ -1,4 +1,4 @@
-package com.datasonnet;
+package com.datasonnet.modules;
 
 /*-
  * Copyright 2019-2020 the original author or authors.
@@ -16,7 +16,7 @@ package com.datasonnet;
  * limitations under the License.
  */
 
-import com.datasonnet.spi.ujsonUtils;
+import com.datasonnet.spi.UJsonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -44,7 +44,7 @@ public class Regex {
         Matcher matcher = pattern.matcher(str);
         ArrayNode regexMatch = scan(matcher);
 
-        return regexMatch != null ? ujsonUtils.parse(regexMatch.toString()) : Null$.MODULE$;
+        return regexMatch != null ? UJsonUtils.parse(regexMatch.toString()) : Null$.MODULE$;
     }
 
     public static String regexQuoteMeta(String str) {
@@ -66,7 +66,7 @@ public class Regex {
 
         while (matcher.find()) {
             ObjectNode nextMatch = getRegexMatch(matcher);
-            matcher.appendReplacement(sb, replace.apply(ujsonUtils.parse(nextMatch.toString())));
+            matcher.appendReplacement(sb, replace.apply(UJsonUtils.parse(nextMatch.toString())));
         }
         matcher.appendTail(sb);
         return sb.toString();
@@ -86,7 +86,7 @@ public class Regex {
             return Null$.MODULE$;
         }
 
-        return ujsonUtils.parse(getRegexMatch(matcher).toString());
+        return UJsonUtils.parse(getRegexMatch(matcher).toString());
     }
 
     private static ArrayNode scan(Matcher matcher) throws RegexException {

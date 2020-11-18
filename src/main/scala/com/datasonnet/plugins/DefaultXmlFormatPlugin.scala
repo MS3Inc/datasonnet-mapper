@@ -16,14 +16,15 @@ package com.datasonnet.plugins
  * limitations under the License.
  */
 
-import java.io._
+
+import java.io.{BufferedOutputStream, ByteArrayOutputStream, File, InputStream, OutputStream, OutputStreamWriter, StringWriter}
 import java.net.URL
 import java.nio.charset.Charset
 
 import com.datasonnet.document
 import com.datasonnet.document.{DefaultDocument, MediaType, MediaTypes}
-import com.datasonnet.plugins.xml.XML
-import com.datasonnet.spi.{AbstractDataFormatPlugin, DataFormatService, PluginException}
+import com.datasonnet.plugins.xml.Xml
+import com.datasonnet.spi.{AbstractDataFormatPlugin, PluginException}
 import ujson.Value
 
 import scala.collection.mutable
@@ -32,7 +33,7 @@ import scala.jdk.CollectionConverters.MapHasAsScala
 // See: http://wiki.open311.org/JSON_and_XML_Conversion/#the-badgerfish-convention
 // http://www.sklar.com/badgerfish/
 // http://dropbox.ashlock.us/open311/json-xml/
-object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
+object DefaultXmlFormatPlugin extends AbstractDataFormatPlugin {
   private val XMLNS_KEY = "xmlns"
   val DEFAULT_NS_KEY = "$"
   private val DEFAULT_DS_NS_SEPARATOR = ":"
@@ -40,6 +41,7 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
   private val DEFAULT_DS_TEXT_KEY_PREFIX = "$"
   private val DEFAULT_DS_VERSION = "1.0"
   private val DEFAULT_DS_CDATA_KEY_PREFIX = "#"
+  private val DEFAULT_DS_BADGERFISH_MODE = "simple"
 
   val DS_NS_SEPARATOR = "namespaceseparator"
   val DS_ATTRIBUTE_KEY_PREFIX = "attributecharacter"
@@ -53,6 +55,8 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
 
   val DS_AUTO_EMPTY = "autoemptyelements"
   val DS_NULL_AS_EMPTY = "nullasemptyelement"
+
+  val DS_BADGERFISH_MODE = "badgerfish"
 
   supportedTypes.add(MediaTypes.APPLICATION_XML)
   supportedTypes.add(MediaTypes.TEXT_XML)
@@ -69,12 +73,14 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
   writerParams.add(DS_VERSION)
   writerParams.add(DS_AUTO_EMPTY)
   writerParams.add(DS_NULL_AS_EMPTY)
+  writerParams.add(DS_BADGERFISH_MODE)
 
   readerParams.add(DS_NS_SEPARATOR)
   readerParams.add(DS_ATTRIBUTE_KEY_PREFIX)
   readerParams.add(DS_TEXT_KEY_PREFIX)
   readerParams.add(DS_CDATA_KEY_PREFIX)
   readerParams.add(DS_NAMESPACE_DECLARATIONS)
+  readerParams.add(DS_BADGERFISH_MODE)
 
   readerSupportedClasses.add(classOf[String].asInstanceOf[java.lang.Class[_]])
   readerSupportedClasses.add(classOf[java.net.URL].asInstanceOf[java.lang.Class[_]])
@@ -85,16 +91,16 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
   writerSupportedClasses.add(classOf[OutputStream].asInstanceOf[java.lang.Class[_]])
 
   @throws[PluginException]
-  override def read(doc: document.Document[_], service: DataFormatService): Value = {
+  override def read(doc: document.Document[_]): Value = {
     if (doc.getContent == null) return ujson.Null
 
     val effectiveParams = EffectiveParams(doc.getMediaType)
 
     doc.getContent.getClass match {
-      case cls if classOf[String].isAssignableFrom(cls) => XML.loadString(doc.getContent.asInstanceOf[String], effectiveParams)
-      case cls if classOf[URL].isAssignableFrom(cls) => XML.load(doc.getContent.asInstanceOf[URL], effectiveParams)
-      case cls if classOf[File].isAssignableFrom(cls) => XML.loadFile(doc.getContent.asInstanceOf[File], effectiveParams)
-      case cls if classOf[InputStream].isAssignableFrom(cls) => XML.load(doc.getContent.asInstanceOf[InputStream], effectiveParams)
+      case cls if classOf[String].isAssignableFrom(cls) => Xml.loadString(doc.getContent.asInstanceOf[String], effectiveParams)
+      case cls if classOf[URL].isAssignableFrom(cls) => Xml.load(doc.getContent.asInstanceOf[URL], effectiveParams)
+      case cls if classOf[File].isAssignableFrom(cls) => Xml.loadFile(doc.getContent.asInstanceOf[File], effectiveParams)
+      case cls if classOf[InputStream].isAssignableFrom(cls) => Xml.load(doc.getContent.asInstanceOf[InputStream], effectiveParams)
       case _ => throw new PluginException(new IllegalArgumentException("Unsupported document content class, use the test method canRead before invoking read"))
     }
   }
@@ -123,14 +129,14 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
 
     if (targetType.isAssignableFrom(classOf[String])) {
       val writer = new StringWriter()
-      XML.writeXML(writer, inputAsObj.head.asInstanceOf[(String, ujson.Obj)], effectiveParams)
+      Xml.writeXml(writer, inputAsObj.head.asInstanceOf[(String, ujson.Obj)], effectiveParams)
 
       new DefaultDocument(writer.toString, MediaTypes.APPLICATION_XML).asInstanceOf[document.Document[T]]
     }
 
     else if (targetType.isAssignableFrom(classOf[OutputStream])) {
       val out = new BufferedOutputStream(new ByteArrayOutputStream)
-      XML.writeXML(new OutputStreamWriter(out, charset), inputAsObj.head.asInstanceOf[(String, ujson.Obj)], effectiveParams)
+      Xml.writeXml(new OutputStreamWriter(out, charset), inputAsObj.head.asInstanceOf[(String, ujson.Obj)], effectiveParams)
 
       new DefaultDocument(out, MediaTypes.APPLICATION_XML).asInstanceOf[document.Document[T]]
     }
@@ -140,11 +146,16 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
     }
   }
 
+  object BadgerFishMode extends Enumeration {
+    val simple, full = Value
+  }
+
   case class EffectiveParams(nsSeparator: String, textKeyPrefix: String,
                              cdataKeyPrefix: String, attrKeyPrefix: String,
                              omitDeclaration: Boolean, version: String,
                              xmlnsKey: String, nullAsEmpty: Boolean,
-                             autoEmpty: Boolean, declarations: Map[String, String])
+                             autoEmpty: Boolean, declarations: Map[String, String],
+                             mode: BadgerFishMode.Value)
 
   object EffectiveParams {
     def apply(mediaType: MediaType): EffectiveParams = {
@@ -160,10 +171,11 @@ object DefaultXMLFormatPlugin extends AbstractDataFormatPlugin {
       val declarations: Map[String, String] = mediaType.getParameters.asScala.toList
         .filter(entryVal => entryVal._1.matches(DS_NAMESPACE_DECLARATIONS))
         .map(entryVal => (entryVal._2, entryVal._1.substring(DS_NAMESPACE_DECLARATIONS.length - 3)))
+        .map(entry => if (entry._2 == "$") (entry._1, "") else entry)
         .toMap
+      val mode = BadgerFishMode.withName(Option(mediaType.getParameter(DS_BADGERFISH_MODE)).getOrElse(DEFAULT_DS_BADGERFISH_MODE).toLowerCase)
 
-      EffectiveParams(nsSep, txtPref, cdataPref, attrPref, omitDecl, ver, xmlns, nullEmpty, autoEmpty, Map.from(declarations))
+      EffectiveParams(nsSep, txtPref, cdataPref, attrPref, omitDecl, ver, xmlns, nullEmpty, autoEmpty, declarations, mode)
     }
   }
-
 }
