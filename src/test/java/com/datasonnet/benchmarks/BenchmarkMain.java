@@ -43,6 +43,8 @@ public class BenchmarkMain {
         //System.out.println(DSObjects.objectsScripts.keySet().stream().sorted().map(it -> "\"" + it + "\"").collect(Collectors.joining(",")));
         String fileName = "target/jmh-reports/jmh-benchmark-report.csv";
         StringBuilder regex = new StringBuilder(".*DS.*");
+        int iterations = 5;
+        TimeValue time = TimeValue.seconds(2);
         for(int i =0; i<args.length ; i ++) {
             if(args[i].equals("-f") || args[i].equals("--file")){
                 i++;
@@ -51,16 +53,20 @@ public class BenchmarkMain {
                 i++;
                 regex.append(args[i]).append(".*");
             }
+            else if (args[i].equals("-v") || args[i].equals("--verify")){
+                iterations=1;
+                time = TimeValue.milliseconds(500);
+            }
         }
         createFile(fileName);
         Options opt = new OptionsBuilder()
                 .include(regex.toString())
                 .mode(Mode.AverageTime)
                 .timeUnit(TimeUnit.MICROSECONDS)
-                .warmupIterations(5)
-                .warmupTime(TimeValue.seconds(1))
-                .measurementIterations(5)
-                .measurementTime(TimeValue.seconds(2))
+                .warmupIterations(iterations)
+                .warmupTime(time)
+                .measurementIterations(iterations)
+                .measurementTime(time)
                 .threads(1)
                 .forks(1)
                 .shouldFailOnError(true)
