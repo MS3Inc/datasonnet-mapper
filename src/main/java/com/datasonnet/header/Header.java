@@ -37,7 +37,7 @@ public class Header {
     public static final String DATASONNET_PRESERVE_ORDER = "preserveOrder";
     public static final String DATAFORMAT_PREFIX = "dataformat";
     public static final String DATAFORMAT_DEFAULT = "*";
-    public static final String VERSION = "0.6";
+    public static final String VERSION = "0.7";
     private final String version;
     private final boolean preserveOrder;
     private final Map<String, MediaType> namedInputs;
