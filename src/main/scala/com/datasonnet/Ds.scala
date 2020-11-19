@@ -18,6 +18,7 @@ package com.datasonnet
 
 import java.math.{BigDecimal, RoundingMode}
 import java.net.URL
+import java.nio.charset.{Charset, StandardCharsets}
 import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -29,6 +30,8 @@ import com.datasonnet.document.{DefaultDocument, MediaType}
 import com.datasonnet.header.Header
 import com.datasonnet.modules.{Crypto, JsonPath, Regex}
 import com.datasonnet.spi.{DataFormatService, Library, UJsonUtils}
+import javax.crypto.Cipher
+import javax.crypto.spec.{IvParameterSpec, SecretKeySpec}
 import sjsonnet.Expr.Member.Visibility
 import sjsonnet.ReadWriter.{ApplyerRead, ArrRead, StringRead}
 import sjsonnet.Std.{builtin, builtinWithDefaults, _}
@@ -1026,7 +1029,137 @@ object Ds extends Library {
       builtin("hmac", "value", "secret", "algorithm") {
         (_, _, value: String, secret: String, algorithm: String) =>
           Crypto.hmac(value, secret, algorithm)
-      }
+      },
+
+      /**
+       * Encrypts the value with specified algorithm, mode, and padding using the provided secret. Converts the encryption to a readable format with Base64
+       * Possible algorithms to use are AES, DES, and DESede. The provided secret must be of lengths 16 or 32, 8, and 24 respectively.
+       * All Algorithms only support NoPadding or PKCS5Padding
+       *
+       * @builtinParam value The message to be encrypted.
+       *    @types [String]
+       * @builtinParam secret The secret used to encrypt the original messsage.
+       *    @types [String]
+       * @builtinParam algorithm The algorithm used for the encryption.
+       *    @types [String]
+       * @builtinParam mode The encryption mode to be used.
+       *    @types [String]
+       * @builtinParam padding The encryption secret padding to be used
+       *    @types [String]
+       *
+       * @builtinReturn Base64 String value of the encrypted message
+       *    @types [String]
+       *
+       * @changed 0.7.1
+       */
+      builtin0("encrypt", "value", "secret", "algorithm", "mode", "padding") {
+        (vals, ev,fs) =>
+          val valSeq = validate(vals, ev, fs, Array(StringRead, StringRead, StringRead, StringRead, StringRead))
+          val value = valSeq(0).asInstanceOf[String]
+          val secret = valSeq(1).asInstanceOf[String]
+          val algorithm = valSeq(2).asInstanceOf[String]
+          val mode = valSeq(3).asInstanceOf[String]
+          val padding = valSeq(4).asInstanceOf[String]
+          var ivSize: Int = 0
+
+          if(!padding.equalsIgnoreCase("NoPadding") && !padding.equalsIgnoreCase("PKCS5Padding")){
+            {throw Error.Delegate("Padding must be either: NoPadding or PKCS5Padding, got: " + padding)}
+          }
+
+          algorithm.toUpperCase() match {
+            case "AES" =>
+              ivSize = 16;
+              if(secret.length != 16 && secret.length != 32)
+              {throw Error.Delegate("Secret length must be 16 or 32 bytes, got: " + secret.length)}
+            case "DES" =>
+              ivSize = 8
+              if(secret.length != 8)
+              {throw Error.Delegate("Secret length must be 8 bytes, got: " + secret.length) }
+            case "DESEDE" =>
+              ivSize = 8
+              if(secret.length != 24)
+              {throw Error.Delegate("Secret length must be 24 bytes, got: " + secret.length) }
+            case i => throw Error.Delegate("Expected algorithm to be one of AES, DES, DESede, or RSA. Got: " + i)
+          }
+
+          var cipher: Cipher = null
+
+          mode.toUpperCase match {
+            case "CBC" =>
+              cipher = Cipher.getInstance(algorithm.toUpperCase + "/CBC/" + padding)
+              cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(secret.getBytes, algorithm.toUpperCase), new IvParameterSpec(new Array[Byte](ivSize)))
+            case "ECB" =>
+              cipher = Cipher.getInstance(algorithm.toUpperCase + "/ECB/" + padding)
+              cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(secret.getBytes, algorithm.toUpperCase))
+            case i => throw Error.Delegate("Expected mode to be either CBC or ECB, got: " + i)
+          }
+          Val.Lazy(Val.Str(Base64.getEncoder.encodeToString(cipher.doFinal(value.getBytes)))).force
+      },
+
+      /**
+       * Decrypts the Base64 value with specified algorithm, mode, and padding using the provided secret.
+       * Possible algorithms to use are AES, DES, and DESede. The provided secret must be of lengths 16 or 32, 8, and 24 respectively.
+       * All Algorithms only support NoPadding or PKCS5Padding
+       *
+       * @builtinParam value The encrypted message to be decrypted.
+       *    @types [String]
+       * @builtinParam secret The secret used to encrypt the original messsage.
+       *    @types [String]
+       * @builtinParam algorithm The algorithm used for the encryption.
+       *    @types [String]
+       * @builtinParam mode The encryption mode to be used.
+       *    @types [String]
+       * @builtinParam padding The encryption secret padding to be used
+       *    @types [String]
+       *
+       * @builtinReturn Base64 String value of the encrypted message
+       *    @types [String]
+       *
+       * @changed 0.7.1
+       */
+      builtin0("decrypt", "value", "secret", "algorithm", "mode", "padding") {
+        (vals, ev,fs) =>
+          val valSeq = validate(vals, ev, fs, Array(StringRead, StringRead, StringRead, StringRead, StringRead))
+          val value = valSeq(0).asInstanceOf[String]
+          val secret = valSeq(1).asInstanceOf[String]
+          val algorithm = valSeq(2).asInstanceOf[String]
+          val mode = valSeq(3).asInstanceOf[String]
+          val padding = valSeq(4).asInstanceOf[String]
+          var ivSize: Int = 0
+
+          if(!padding.equalsIgnoreCase("NoPadding") && !padding.equalsIgnoreCase("PKCS5Padding")){
+            {throw Error.Delegate("Padding must be either: NoPadding or PKCS5Padding, got: " + padding)}
+          }
+
+          algorithm.toUpperCase() match {
+            case "AES" =>
+              ivSize = 16;
+              if(secret.length != 16 && secret.length != 32)
+                {throw Error.Delegate("Secret length must be 16 or 32 bytes, got: " + secret.length)}
+            case "DES" =>
+              ivSize = 8
+              if(secret.length != 8)
+                {throw Error.Delegate("Secret length must be 8 bytes, got: " + secret.length) }
+            case "DESEDE" =>
+              ivSize = 8
+              if(secret.length != 24)
+                {throw Error.Delegate("Secret length must be 24 bytes, got: " + secret.length) }
+            case i => throw Error.Delegate("Expected algorithm to be one of AES, DES, DESede, or RSA. Got: " + i)
+          }
+
+          var cipher: Cipher = null
+
+          mode.toUpperCase match {
+            case "CBC" =>
+              cipher = Cipher.getInstance(algorithm.toUpperCase + "/CBC/" + padding)
+              cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(secret.getBytes, algorithm.toUpperCase), new IvParameterSpec(new Array[Byte](ivSize)))
+            case "ECB" =>
+              cipher = Cipher.getInstance(algorithm.toUpperCase + "/ECB/" + padding)
+              cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(secret.getBytes, algorithm.toUpperCase))
+            case i => throw Error.Delegate("Expected mode to be either CBC or ECB, got: " + i)
+          }
+          Val.Lazy(Val.Str(new String(cipher.doFinal(Base64.getDecoder.decode(value)), Charset.forName("UTF-8")))).force
+      },
     ),
 
     "jsonpath" -> moduleFrom(
