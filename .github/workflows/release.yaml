@@ -78,7 +78,7 @@ jobs:
       - name: Get Version
         id: version
         run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          VERSION=$( git tag | tail -1 )
           echo "::set-output name=version::$VERSION"
       - name: Build Markdown File
         id: markdown
