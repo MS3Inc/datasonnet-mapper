@@ -95,6 +95,7 @@ jobs:
           git config --global user.name "GitHub Actions Bot"
       - name: Commit benchmark results
         run: |
+          git pull
           git add ${{ steps.markdown.outputs.file }}.*
           git commit -m "Github action: updated the benchmark files"
           git push
