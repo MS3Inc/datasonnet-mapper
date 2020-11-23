@@ -266,6 +266,12 @@ public class MediaType implements Comparable<MediaType>, Serializable {
         }
     }
 
+    /**
+     * Returns true if the input string is quoted
+     *
+     * @param s The input String
+     * @return false on null or not quoted, true otherwise
+     */
     private static boolean isQuotedString(String s) {
         if (s == null) {
             return false;
@@ -278,6 +284,12 @@ public class MediaType implements Comparable<MediaType>, Serializable {
         }
     }
 
+    /**
+     * Removes the wrapping quotes in a string
+     *
+     * @param s Input string to unqoute
+     * @return The now quote-less string
+     */
     protected static String unquote(String s) {
         if (!isQuotedString(s)) {
             return s;
@@ -289,6 +301,8 @@ public class MediaType implements Comparable<MediaType>, Serializable {
     /**
      * Indicates whether the {@linkplain #getType() type} is the wildcard character
      * <code>&#42;</code> or not.
+     *
+     * @return True if its the wildcard character
      */
     public boolean isWildcardType() {
         return WILDCARD_TYPE.equals(getType());
@@ -316,14 +330,15 @@ public class MediaType implements Comparable<MediaType>, Serializable {
     }
 
     /**
-     * Return the primary type.
+     *
+     * @return The primary type.
      */
     public String getType() {
         return this.type;
     }
 
     /**
-     * Return the subtype.
+     * @return The subtype.
      */
     public String getSubtype() {
         return this.subtype;
@@ -394,6 +409,11 @@ public class MediaType implements Comparable<MediaType>, Serializable {
         return false;
     }
 
+    /**
+     *
+     * @param other the comparable object
+     * @return {@code true} if the type and subtype match or if the objects are equal
+     */
     @Override
     public boolean equals(@Nullable Object other) {
         if (this == other) {
@@ -540,6 +560,14 @@ public class MediaType implements Comparable<MediaType>, Serializable {
         return 0;
     }
 
+    /**
+     * Appends charset parameter to existing parameter map
+     * @param charset
+     * @param parameters
+     * @return new map object
+     *
+     * @implNote why does this create an entirely new map instead of appending the exisitng map?
+     */
     private static Map<String, String> addCharsetParameter(Charset charset, Map<String, String> parameters) {
         Map<String, String> map = new LinkedHashMap<>(parameters);
         map.put(PARAM_CHARSET, charset.name());
@@ -553,6 +581,16 @@ public class MediaType implements Comparable<MediaType>, Serializable {
      */
     public static class SpecificityComparator<T extends MediaType> implements Comparator<T> {
 
+        /**
+         * Compares the two given mimetypes by returning
+         * {@code 1} or {@code -1} if only one mimetype or sub type is a wildcard.
+         * Returns 0 if the mimetypes match
+         * Otherwise, calls {@link MediaType.SpecificityComparator#compareParameters(MediaType, MediaType)}
+         *
+         * @param mimeType1
+         * @param mimeType2
+         * @return 0, 1, or -1
+         */
         @Override
         public int compare(T mimeType1, T mimeType2) {
             if (mimeType1.isWildcardType() && !mimeType2.isWildcardType()) {  // */* < audio/*
@@ -574,6 +612,12 @@ public class MediaType implements Comparable<MediaType>, Serializable {
             }
         }
 
+        /**
+         * Compares the paramaters size using {@link Integer#compare(int, int)}
+         * @param mimeType1
+         * @param mimeType2
+         * @return 0 or 1
+         */
         protected int compareParameters(T mimeType1, T mimeType2) {
             int paramsSize1 = mimeType1.getParameters().size();
             int paramsSize2 = mimeType2.getParameters().size();
@@ -581,6 +625,13 @@ public class MediaType implements Comparable<MediaType>, Serializable {
         }
     }
 
+    /**
+     * Validates that the required parameters are valid.
+     * Throws IllegalArgumentException otherwise
+     *
+     * @param attribute
+     * @param value
+     */
     protected static void checkParameters(String attribute, String value) {
         if (attribute == null || attribute.isEmpty()) {
             throw new IllegalArgumentException("'attribute' must not be empty");
@@ -706,6 +757,8 @@ public class MediaType implements Comparable<MediaType>, Serializable {
     /**
      * Return a replica of this instance with the quality value of the given {@code MediaType}.
      *
+     * @param mediaType The object to copy quality value from
+     *
      * @return the same instance if the given MediaType doesn't have a quality value,
      * or a new one otherwise
      */
@@ -732,7 +785,6 @@ public class MediaType implements Comparable<MediaType>, Serializable {
         params.remove(PARAM_QUALITY_FACTOR);
         return new MediaType(this, params);
     }
-
 
     /**
      * Parse the given String value into a {@code MediaType} object,
@@ -887,6 +939,8 @@ public class MediaType implements Comparable<MediaType>, Serializable {
     /**
      * Sorts the given list of {@code MediaType} objects by specificity as the
      * primary criteria and quality value the secondary.
+     *
+     * @param mediaTypes list of media types to be sorted
      *
      * @see MediaType#sortBySpecificity(List)
      * @see MediaType#sortByQualityValue(List)

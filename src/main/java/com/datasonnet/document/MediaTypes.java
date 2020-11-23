@@ -356,6 +356,11 @@ public class MediaTypes {
      */
     public static final MediaType UNKNOWN;
 
+    /**
+     * A String equivalent of {@link MediaTypes#MULTIPART_RELATED}.
+     *
+     * @since 0.3.0
+     */
     public static final String UNKNOWN_VALUE = "unknown/unknown";
 
     public static final String PARAM_CHARSET = "charset";
@@ -393,7 +398,13 @@ public class MediaTypes {
         UNKNOWN = new MediaType("unknown", "unknown");
     }
 
-    // TODO: 8/11/20 add explicit file extension support to MediaType class
+    /**
+     * Get the {@link MediaType} of the extenstion
+     * @param ext Mediatype extenstion value
+     * @return optional medai type. defaults to empty
+     *
+     * TODO: 8/11/20 add explicit file extension support to MediaType class
+     */
     public static Optional<MediaType> forExtension(String ext) {
         switch (ext) {
             case "json":
