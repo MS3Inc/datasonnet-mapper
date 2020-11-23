@@ -25,8 +25,6 @@ jobs:
   release:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.release-version.outputs.version }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -39,15 +37,6 @@ jobs:
         run: |
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git config --global user.name "${GITHUB_ACTOR}"
-      - name: Get release version
-        id: release-version
-        run: |
-          ./mvnw -DskipTests -V --no-transfer-progress --batch-mode --settings .settings.xml clean \
-            -DreleaseVersion='${{ github.event.inputs.release_ver }}' \
-            -DdevelopmentVersion='${{ github.event.inputs.snapshot_ver }}' \
-            release:prepare -DdryRun=true
-          VERSION=$(mvn -f pom.xml.tag help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "::set-output name=version::$VERSION"
       - name: mvn clean release:prepare
         run: "./mvnw -V --no-transfer-progress --batch-mode --settings .settings.xml clean \
         -DreleaseVersion='${{ github.event.inputs.release_ver }}' \
@@ -98,7 +87,7 @@ jobs:
         run: |
           mkdir -p benchmarks
           HEADER="$(echo -e "${{ steps.benchmarks.outputs.resources }}" | tr '|' '\n\n' )"
-          printf "%s\n\n%s\n\n%s\n\n%s\n\n" "$(date +"%a %d %b %Y")" "${{ needs.release.outputs.version }}" "$HEADER" "$(cat target/jmh-reports/jmh-benchmark-report.csv | sed 's/\r$//' | awk '{ printf("%s%s%s", "|", $0,"|\n") } NR==1 {print "|--|--|--|--|--|--|--|--|" }' | tr -s ',' '|')" > "${FILE}.md"
+          printf "%s\n\n%s\n\n%s\n\n%s\n\n" "$(date +"%a %d %b %Y")" "${{ steps.version.outputs.version }}" "$HEADER" "$(cat target/jmh-reports/jmh-benchmark-report.csv | sed 's/\r$//' | awk '{ printf("%s%s%s", "|", $0,"|\n") } NR==1 {print "|--|--|--|--|--|--|--|--|" }' | tr -s ',' '|')" > "${FILE}.md"
           echo "::set-output name=file::$FILE"
       - name: Setup Git
         run: |
